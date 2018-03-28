@@ -1,0 +1,49 @@
+/*
+* @Author: JYC_
+* @Date:   2017-11-27 22:00:33
+* @Last Modified by:   JYC_
+* @Last Modified time: 2017-11-28 15:17:20
+*/
+body {
+    padding-top: 80px;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+.submitnone {
+    background: none;
+    border: none;
+}
+.navbar-inverse input[type="text"] {
+	background: #313131;
+	border: none;
+	color: #999;
+}
+
+.navbar-inverse .navbar-form{
+	position: relative;
+}
+
+.navbar-inverse button[type="submit"] {
+	position: absolute;
+	top: 15%;
+	right: 20px; 
+	background: none;
+	border: none;
+}
+
+.navbar-inverse .glyphicon{
+	color: #999;
+
+}
+
+.profile{
+	margin-right: 25px;
+}
+
+

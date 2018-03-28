@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var id = Request.QueryString["id"];
+    var list = "select *from courses where id = "+id;
+    var row1 = db.QuerySingle(list);
+    var tlist = "select *from teachers where teachers_type = 1 or teachers_type = 3";
+    if (IsPost)
+    {
+        var name = Request.Form["name"];
+        var teachers = Request.Form["teachers"];
+        var update = "update courses set courses_name=@0,teachers_id=@1 where id=" + id;
+        db.Execute(update, name, teachers);
+        Response.Redirect("~/courses");
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>课程名称：</strong><br />
+    <input class="form-control" type="text" id="name" name="name" value=@row1.courses_name><br />
+    <strong>指导教师：</strong><br />
+    <select class="form-control" id="teachers" name="teachers">
+        @foreach (var row in db.Query(tlist))
+            {
+            <option value="@row.id" @if (row.id == row1.teachers_id) { @: selected="selected"
+                                                }>
+                @row.teachers_name
+            </option>
+        }
+    </select>
+    <input class="btn btn-primary" type="submit" value="确认修改" />
+</form>

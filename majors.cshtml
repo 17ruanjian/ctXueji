@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var list = "select *from majors";
+}
+<a class="btn btn-info" href="~/majors_add.cshtml">新增专业</a>
+<table id="table_id" class="display">
+    <thead>
+        <tr class="t">
+            <th>专业ID</th>
+            <th>专业名称</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in db.Query(list))
+        {
+            <tr class="t">
+                <td class="center">@row.id</td>
+                <td class="center"><a href="~/majors_edit.cshtml?id=@row.id">@row.majors_name</a></td>
+                <td class="center"><a class="btn btn-danger" href="~/majors_del.cshtml?id=@row.id">删除</a></td>
+            </tr>
+        }
+    </tbody>
+</table>

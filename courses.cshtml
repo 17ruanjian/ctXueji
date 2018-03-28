@@ -1,0 +1,51 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    var list = "select *from courses";
+}
+@if (Convert.ToInt16(Session["authority"]) == 2)
+{
+    <a class="btn btn-info" href="~/courses_add.cshtml">新增课程</a>}
+<table id="table_id" class="display">
+    <thead>
+        <tr class="t">
+            <th>课程ID</th>
+            <th>课程名称</th>
+            <th>指导教师</th>
+            @if (Convert.ToInt16(Session["authority"]) == 2)
+            {
+                <th>操作</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in db.Query(list))
+        {
+            <tr class="t">
+                <td class="center">@row.id</td>
+                @if (Convert.ToInt16(Session["authority"]) == 2)
+                {
+                    <td class="center"><a href="~/courses_edit.cshtml?id=@row.id">@row.courses_name</a></td>
+                }
+                else
+                {
+                    <td class="center">@row.courses_name</td>
+                }
+                @{
+                    var tid = row.teachers_id;
+                    var listt = "select *from teachers where id=" + tid;
+                    var row1 = db.QuerySingle(listt);
+                }
+                <td class="center">@row1.teachers_name</td>
+                @if (Convert.ToInt16(Session["authority"]) == 2)
+                {
+                    <td><a class="btn btn-danger" href="~/courses_del.cshtml?id=@row.id">删除</a></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

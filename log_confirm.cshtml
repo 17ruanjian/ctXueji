@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (IsPost)
+    {
+        var sa = Request.Form["password"];
+        string temp = "DannyJiang";
+        if(sa == temp)
+        {
+            Response.Redirect("~/register.cshtml");
+        }
+        else
+        {
+            Response.Redirect("~/login.cshtml");
+        }
+    }
+}
+<style>
+    h1 {
+        font-weight: 900;
+    }
+
+    .divForm {
+        position: absolute; /*绝对定位*/
+        width: 400px;
+        height: 200px;
+        text-align: center; /*(让div中的内容居中)*/
+        left: 50%;
+        margin-left: -200px;
+    }
+
+    .form-group {
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+    }
+
+    .title_left {
+        width: 100px;
+        font-size: 18px;
+    }
+
+    .form-group input {
+        width: 100%;
+    }
+
+    .btn btn-primary {
+        left: 0%;
+    }
+</style>
+<div class="divForm">
+    <h1>-欢迎来到学籍管理系统-</h1><br /><br />
+    <form method="post">
+        <div class="form-group">
+            <label class="title_left">Controller:</label>
+            <input type="password" class="form-control" name="password" id="password" placeholder="请输入管理员密码~">
+        </div>
+        <input class="btn btn-primary" type="submit" value="确认">
+    </form>
+
+</div>

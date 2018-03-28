@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var classes = Request.QueryString["cid"];
+    var courses = Request.QueryString["coid"];
+    var list = "select *from rollcall where classes_id=" + classes + "and courses_id=" + courses;
+    var listgroup = "select students_id from rollcall where classes_id=" + classes + "and courses_id=" + courses + " group by students_id";
+}
+<table id="table_id" class="display">
+    <thead>
+        <tr>
+            <th>学生姓名</th>
+            <th>迟到/旷课 次数</th>
+            <th>出勤率</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            float classes_z = 0;
+            float classes_c = 0;
+            float classes_b = 1.0F;
+        }
+        @foreach (var row in db.Query(listgroup))
+        {
+
+            var sid = row.students_id;
+            var studentslist = "select *from students where id=" + sid;
+            var row1 = db.QuerySingle(studentslist);
+
+            <tr>
+                <td class="center">@row1.students_name</td>
+                @{
+                    float t = 0;
+                    float z = 0;
+                    float b = 1.0F;
+                    var listp = "select *from rollcall where classes_id=" + classes + "and courses_id=" + courses + " and students_id=" + sid + " and user_power=3";//+ " and user_power=2"
+                    foreach (var row3 in db.Query(listp))
+                    {
+                        classes_z++;
+                        z++;
+                        if (row3.state == 1)
+                        {
+                            continue;
+
+                        }
+                        else
+                        {
+                            classes_c++;
+                            t++;
+                        }
+
+                    }
+                    <td class="center">@t 次</td>
+                    if (z == 0)
+                    {
+                        <td class="centent"><span class="btn btn-success">100 %</span></td>
+
+                    }
+                    else if (z == t)
+                    {
+                        <td class="centen"><span class="btn btn-warning">50 %</span></td>
+                    }
+                    else
+                    {
+                        b = ((z - t) / z);
+                        b = b * 100;
+                        if (b > 90)
+                        {
+                            <td class="centent"><span class="btn btn-success">@b %</span></td>
+                        }
+                        else if (b > 75)
+                        {
+                            <td class="centent"><span class="btn btn-danger">@b %</span></td>
+                        }
+                        else
+                        {
+                            <td class="centen"><span class="btn btn-warning">@b %</span></td>
+                        }
+                    }
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+@if (classes_z == 0)
+{
+    <span>总出勤：</span><span class="btn btn-success">100 %</span>
+}
+else if (classes_z == classes_c)
+{
+    <span>总出勤：</span><span class="btn btn-warning">50 %</span>
+}
+else
+{
+    classes_b = (classes_z - classes_c) / classes_z;
+    classes_b = classes_b * 100;
+    if (classes_b > 90)
+    {
+        <span>总出勤：</span><span class="btn btn-success">@classes_b %</span>
+    }
+    else if (classes_b > 75)
+    {
+        <span>总出勤：</span><span class="btn btn-danger">@classes_b %</span>
+    }
+    else
+    {
+        <span>总出勤：</span><span class="btn btn-warning">@classes_b %</span>
+    }
+}

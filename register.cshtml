@@ -1,0 +1,68 @@
+﻿@using System;
+@using System.Data;
+@using System.Data.SqlClient;
+@using System.Text;
+@using System.Security.Cryptography;
+
+@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+
+    string MD5Encrypt16(string password)
+    {
+        var md5 = new MD5CryptoServiceProvider();
+        string t2 = BitConverter.ToString(md5.ComputeHash(Encoding.Default.GetBytes(password)), 4, 8);
+        t2 = t2.Replace("-", "");
+        return t2;
+    }
+
+    if (IsPost)
+    {
+        var username = Request.Form["username"];
+        var password = Request.Form["password"];
+        var name = Request.Form["name"];
+        var au = Convert.ToInt16(Request.Form["au"]);
+        string t = MD5Encrypt16(password);
+        var insertinto = "insert into users (name,username,password,authority) values(@0,@1,@2,@3)";
+        db.Execute(insertinto,name,username,t,au);
+        Response.Redirect("~/login.cshtml");
+    }
+}
+<style>
+    .form-control {
+        width: 600px;
+    }
+
+    form {
+        padding-left: 150px;
+        padding-top: 60px;
+    }
+
+    h1 {
+        padding-left: 150px;
+    }
+</style>
+<h1>-注册-</h1>
+<form method="post">
+    <div id="text" class="form-group">
+        <label for="name">姓名:</label>
+        <input type="text" class="form-control" name="name" id="name" placeholder="请姓名账户~">
+    </div>
+    <div id="text" class="form-group">
+        <label for="name">用户名:</label>
+        <input type="text" class="form-control" name="username" id="username" placeholder="请输入账户~">
+    </div>
+    <div id="text" class="form-group">
+        <label for="number">密码:</label>
+        <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码~">
+    </div>
+    <div id="text" class="form-group">
+
+        <label for="au">权限</label>
+        <select class="form-control" id="au" name="au">
+            <option value="1">讲师</option>
+            <option value="3">导员</option>
+        </select>
+    </div>
+    <input class="btn btn-primary" type="submit" value="注册">
+</form>

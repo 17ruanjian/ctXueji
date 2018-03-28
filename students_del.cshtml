@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var id = Convert.ToInt16(Request.QueryString["id"]);
+    var db = Database.Open("ctXueji");
+    var list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id where students.id="+id;
+    var row = db.QuerySingle(list, id);
+    if (IsPost)
+    {
+        var sid = Request.Form["id"];
+        var deleteCommand = "DELETE FROM students WHERE id = @0";
+        db.Execute(deleteCommand, sid);
+        var delete = "delete from scores where students_id = @0";
+        db.Execute(delete, id);
+        Response.Redirect("~/students");
+    }
+}
+<form method="post" class="navbar-form">
+    <dl>
+        <dt class="page-header">学号:@row.students_number</dt>
+        <dt class="page-header">姓名:@row.students_name</dt>
+        <dt class="page-header">性别:@row.students_sex</dt>
+        <dt class="page-header">年龄:@row.students_age</dt>
+        <dt class="page-header">电话:@row.students_phone</dt>
+        <dt class="page-header">QQ:@row.students_qq</dt>
+        <dt class="page-header">WeChat:@row.students_wx</dt>
+        <dt class="page-header">专业:@row.classes_year@row.majors_name</dt>
+    </dl>
+    <input type="hidden" id="id" name="id" value=@id >
+    <br />
+    <input class="btn btn-primary" type="submit" value="确认删除" />
+</form>

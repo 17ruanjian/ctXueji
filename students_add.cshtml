@@ -1,0 +1,77 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    var tcid = Request.QueryString["tcid"];
+    var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id";
+    if (IsPost)
+    {
+        var number = Request.Form["number"];
+        var name = Request.Form["name"];
+        var sex = Request.Form["sex"];
+        var age = Request.Form["age"];
+        var phone = Request.Form["phone"];
+        var qq = Request.Form["qq"];
+        var wx = Request.Form["wx"];
+        var classes = Request.Form["classes"];
+        var status = Convert.ToInt16(Request.Form["status"]);
+        var insert = "INSERT INTO students (students_number,students_name,students_sex,students_age,students_phone,students_qq,students_wx,classes_id,students_status) Values(@0, @1,@2, @3,@4,@5,@6,@7,@8)";
+        db.Execute(insert, number, name, sex, age, phone, qq, wx, classes, status);
+        var students = "select id,classes_id from students where students_number=@0 and students_name=@1";
+        var sid = db.QuerySingle(students, number, name);
+        var students_id = sid.id;
+        var classes_id = sid.classes_id;
+        var courses = "select distinct exams_id,courses_id from scores where classes_id = " + classes_id;
+        foreach (var i in db.Query(courses))
+        {
+            var s = i.exams_id;
+            var c = i.courses_id;
+            var add = "insert into scores(exams_id,courses_id,students_id,classes_id) values(@0,@1,@2,@3)";
+            db.Execute(add, s, c, students_id, classes_id);
+        }
+        Response.Redirect("~/students?classes_id=" + classes);
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>学号：</strong><br />
+    <input class="form-control" type="text" id="number" name="number" /><br />
+    <strong>姓名：</strong><br />
+    <input class="form-control" type="text" id="name" name="name" /><br />
+    <strong>性别：</strong><br />
+    <label for="students_sex1">男</label><input id="sex" name="sex" type="radio" value="男" />&nbsp;&nbsp;&nbsp;&nbsp;<label for="students_sex2">女</label><input id="sex" name="sex" type="radio" value="女" /><br />
+    @*<input class="form-control" type="text" id="sex" name="sex"/><br />*@
+    <strong>年龄：</strong><br />
+    <input class="form-control" type="text" id="age" name="age" /><br />
+    <strong>电话：</strong><br />
+    <input class="form-control" type="text" id="phone" name="phone" /><br />
+    <strong>QQ：</strong><br />
+    <input class="form-control" type="text" id="qq" name="qq" /><br />
+    <strong>WeChat：</strong><br />
+    <input class="form-control" type="text" id="wx" name="wx" /><br />
+    <strong>专业：</strong><br />
+    <select class="form-control" id="classes" name="classes">
+        @foreach (var row in db.Query(list))
+        {
+            <option value="@row.id" @if (Convert.ToInt16(tcid) == row.id) { @: selected="selected"
+                    }>
+                @row.classes_year@row.majors_name
+            </option>
+        }
+    </select><br />
+    <strong>在籍状态：</strong><br />
+    <select class="form-control" id="status" name="status">
+        <option class="btn btn-success" value=1>
+            在籍
+        </option>
+        <option class="btn btn-warning" value=2>
+            挂籍
+        </option>
+        <option class="btn btn-danger" value=3>
+            开除
+        </option>
+    </select><br /><br />
+    <input class="btn btn-primary" type="submit" value="确认添加" />
+</form>

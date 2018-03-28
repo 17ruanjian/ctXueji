@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var id = Request.QueryString["id"];
+    var db = Database.Open("ctXueji");
+    var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id where classes.id ="+id;
+    var row = db.QuerySingle(list, id);
+    if (IsPost)
+    {
+        var cid = Request.Form["id"];
+        var delete = "delete from classes where id =@0";
+        db.Execute(delete, cid);
+        Response.Redirect("~/classes");
+    }
+}
+<form method="post">
+    <dl>
+        <dt class="page-header">班级：@row.classes_year@row.majors_name</dt>
+        <dt class="page-header">指导员：@row.teachers_name</dt>
+    </dl>
+    <input type="hidden" id="id" name="id" value=@id>
+    <input class="btn btn-primary" type="submit" value="确认删除" />
+</form>

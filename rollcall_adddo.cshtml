@@ -1,0 +1,25 @@
+﻿@{
+    var db = Database.Open("ctXueji");
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    if (IsPost)
+    {
+        var students_id = Request.Form["students_id"];
+        string temp1 = students_id;
+        string[] temparry1 = temp1.Split(',');
+        var courses_id = Request.Form["courses_id"];
+        var classes_id = Request.Form["classes_id"];
+        var time = Request.Form["time"];
+        var b = temparry1.Count();
+        for(int i = 0; i < b; i++)
+        {
+            int t = i + 1;
+            var statu = Request.Form["statu_"+t];
+            var addRollcall = "insert into rollcall (students_id,courses_id,classes_id,time,state,user_power,user_name) values(@0,@1,@2,@3,@4,@5,@6)";
+            db.Execute(addRollcall, temparry1[i], courses_id, classes_id, time, statu,Convert.ToInt16(Session["authority"]),Convert.ToString(Session["name"]));
+        }
+        Response.Redirect("~/jump.cshtml");
+    }
+}

@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    if (IsPost)
+    {
+        var name = Request.Form["name"];
+        var type = Request.Form["type"];
+        var add = "insert into teachers (teachers_name,teachers_type) values(@0,@1)";
+        db.Execute(add, name, type);
+        Response.Redirect("~/teachers");
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>教师：</strong><br />
+    <input class="form-control" type="text" id="name" name="name"><br />
+    <strong>职能：</strong><br />
+                        <select class="form-control" id="type" name="type">
+                            <option value=2>
+                                辅导员
+                            </option>
+                            <option value=1>
+                                讲师
+                            </option>
+                            <option value=3>
+                                讲师+辅导员
+                            </option>
+                        </select>
+    <input class="btn btn-primary" type="submit" value="确认添加" />
+</form>

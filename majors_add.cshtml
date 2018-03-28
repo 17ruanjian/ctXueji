@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    if (IsPost)
+    {
+        var majors = Request.Form["majors"];
+        var db = Database.Open("ctXueji");
+        var add = "insert into majors (majors_name)values(@0)";
+        db.Execute(add, majors);
+        Response.Redirect("~/majors");
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>专业名称：</strong><br />
+    <input class="form-control" type="text" id="majors" name="majors"><br />
+    <input class="btn btn-primary" type="submit" value="确认添加" />
+</form>

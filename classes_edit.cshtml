@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var id = Request.QueryString["id"];
+    var time = DateTime.Now.Year;
+    var db = Database.Open("ctXueji");
+    var list = "select *from classes where id = " + id;
+    var row = db.QuerySingle(list, id);
+    var mid = row.majors_id;
+    var tid = row.teachers_id;
+    var majorsall = "select *from majors";
+    var majorslist = "select *from majors where id = @0";
+    var row1 = db.QuerySingle(majorslist, mid);
+    var teacherslist = "select *from teachers where id = " + tid;
+    var row3 = db.QuerySingle(teacherslist, tid);
+    var teachersall = "select *from teachers";
+    if (IsPost)
+    {
+        var year = Request.Form["year"];
+        var majors = Request.Form["majors"];
+        var teachers = Request.Form["teachers"];
+        var coid = Convert.ToString(Request.Form["coid"]);
+        var addclasses = "update classes set majors_id=@0,classes_year=@1,teachers_id=@2,courses_id=@3 where id = @4";
+        db.Execute(addclasses, majors, year, teachers, coid, id);
+        Response.Redirect("~/classes");
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>专业：</strong><br />
+    <select class="form-control" id="majors" name="majors">
+        @foreach (var row5 in db.Query(majorsall))
+        {
+            <option value="@row5.id" @if (row5.id == row1.id) { @: selected="selected"
+                    }>
+
+                @row5.majors_name
+            </option>
+        }
+    </select>
+    <br />
+    <strong>年份：</strong><br />
+    <input class="form-control" style="width:100px;" type="text" id="year" name="year" value=@row.classes_year>
+    <br />
+    <strong>指导员：</strong>
+    <br />
+    <select class="form-control" id="teachers" name="teachers">
+        @foreach (var row2 in db.Query(teachersall))
+        {
+            if (row2.teachers_type == 2)
+            {
+                <option value="@row2.id" @if (row.teachers_id == row2.id) { @: selected="selected"
+                        }>
+
+                    @row2.teachers_name
+                </option>
+            }
+        }
+    </select>
+    <br />
+    <strong>课程：</strong><br />
+    @{
+        var listc = "select *from courses";
+    }
+    @foreach (var courses in db.Query(listc))
+    {
+        var a = courses.teachers_id;
+        var listt = "select *from teachers where id=" + a;
+        var name = db.QuerySingle(listt, a);
+        <input type="checkbox" name="coid" id="coid" value=@courses.id
+               @{ string temp = row.courses_id; string[] temparry = temp.Split(','); }
+               @foreach (var i in temparry) { if (Convert.ToInt16(i) == courses.id) { @: checked="checked"
+               } }>@courses.courses_name @name.teachers_name<br />
+        }
+    <br />
+    <br />
+    <input class="btn btn-primary" type="submit" value="确认修改" />
+</form>

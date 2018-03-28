@@ -1,0 +1,302 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var list = "select *from classes";
+    var coursesList = "select *from courses";
+    var classes_id = Request.QueryString["classes_id"];
+    var teacher_name = Session["name"];
+
+
+    //var js_teacher = "select *from teachers where teachers_name = " + Session["name"];
+    //var r = db.QuerySingle(js_teacher);
+    //string temp1 = r.courses_id;
+    //string[] temparry1 = temp1.Split(',');
+    //foreach (var i in temparry1)
+    //{
+    //    var majors_id = i;
+    //    var js_class = "select *from classes where majors_id = " + i;
+    //    foreach(var row_jd in db.Query(js_class))
+    //    {
+
+    //    }
+    //}
+}
+<style type="text/css">
+
+    td {
+        text-align: center; /*设置水平居中*/
+        vertical-align: middle; /*设置垂直居中*/
+    }
+</style>
+<font id="nowTime" color=grey size="5"></font>
+<script>
+    function showTime() {
+        nowtime = new Date();
+        year = nowtime.getFullYear();
+        month = nowtime.getMonth() + 1;
+        date = nowtime.getDate();
+        document.getElementById("nowTime").innerText = year + "年" + month + "月" + date + "" + nowtime.toLocaleTimeString();
+    }
+
+    setInterval("showTime()", 1000);
+</script>
+<blockquote class="pull-right">
+    <a href="#top">↓下去↓</a>
+    <small>GO <cite title="Source Title">DOWN！</cite></small>
+</blockquote>
+@if (classes_id == null)
+{
+    <form name="form1" method="post" class="navbar-form">
+        <select class="form-control" id="classes" name="classes" onchange="changePost(1)">
+            <option>--请选择--</option>
+            @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 4)//导员
+            {
+                var tid = "select *from teachers where teachers_name='" + teacher_name + "'";
+                var teachers_id = db.QuerySingle(tid);
+                list += " where teachers_id=" + teachers_id.id;//教师登录权限显示自己的班级
+
+                foreach (var row in db.Query(list))
+                {
+                    {
+                        var major_id = row.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row.id>@row.classes_year @row1.majors_name</option>
+                    }
+
+                }
+            }
+            @if (Convert.ToInt16(Session["authority"]) == 1 || Convert.ToInt16(Session["authority"]) == 4) //讲师
+            {
+                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"]+"'";
+                var r = db.QuerySingle(js_teacher);
+                string temp1 = r.majors_id;
+                string[] temparry1 = temp1.Split(',');
+                foreach (var i in temparry1)
+                {
+                    var majors_id = i;
+                    var js_class = "select *from classes where majors_id = " + i;
+                    foreach (var row_jd in db.Query(js_class))
+                    {
+                        var major_id = row_jd.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row_jd.id>@row_jd.classes_year @row1.majors_name</option>
+                    }
+                }
+            }
+            @if (Convert.ToInt16(Session["authority"]) == 2)//LD
+            {
+                foreach (var row in db.Query(list))
+                {
+                    {
+                        var major_id = row.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row.id>@row.classes_year @row1.majors_name</option>
+                    }
+
+                }
+            }
+        </select>
+        <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+            <option>--请选择--</option>
+            @foreach (var row2 in db.Query(coursesList))
+            {
+                <option value=@row2.id>@row2.courses_name</option>
+            }
+        </select>&nbsp;
+        <a class="btn btn-primary" href="~/rollcall.cshtml">记录查询</a>
+    </form>
+}
+else
+{
+    <form name="form1" method="post" class="navbar-form">
+        @{
+            var listclasses = "select *from classes where id=" + classes_id;
+            var row_s = db.QuerySingle(listclasses);
+
+        }
+        <select class="form-control" id="classes" name="classes" onchange="changePost(1)">
+            <option>--请选择--</option>
+            @foreach (var row in db.Query(list))
+            {
+                {
+                    var major_id = row.majors_id;
+                    var majorsList = "select majors_name from majors where id = " + major_id;
+                    var row1 = db.QuerySingle(majorsList);
+                    <option value=@row.id @if (row.id == row_s.id) { @: selected="selected"
+                            }>
+                        @row.classes_year @row1.majors_name
+                    </option>
+                }
+
+            }
+        </select>
+        <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+            <option>--请选择--</option>
+            @{
+                string temp = row_s.courses_id;
+                string[] temparry = temp.Split(',');
+            }
+            @foreach (var i in temparry)
+            {
+                var listcourses = "select *from courses where id=" + i;
+                var c_name = db.QuerySingle(listcourses);
+                <option value=@c_name.id>@c_name.courses_name</option>
+            }
+        </select>&nbsp;
+        <a class="btn btn-primary" href="~/rollcall.cshtml">记录查询</a>
+    </form>
+}
+<font id="ero" color=red size="5"></font>
+<script>
+    function changePost(value) {
+        if (value == 1) {
+            var courses = document.getElementById("courses").value;
+            if (courses == "--请选择--") {
+                var nv = document.getElementById("ero").innerHTML = "请选择课程！";
+                document.form1.submit();
+            } else {
+                document.form1.submit();
+            }
+        } else {
+            var classes = document.getElementById("classes").value;
+            if (classes == "--请选择--") {
+                var nv = document.getElementById("ero").innerHTML = "请选择班级！";
+            } else {
+                document.form1.submit();
+            }
+        }
+        document.getElementById("sp").style.display = "none";
+    }
+</script>
+@if (IsPost)
+{
+    var prompt = 1;
+    var classes = Request.Form["classes"];
+    var listCommand = "SELECT courses_id FROM classes where id = " + classes;
+    var p = db.QuerySingle(listCommand);
+    var courses = Request.Form["courses"];
+    if (courses == "--请选择--")
+    {
+        Response.Redirect("~/manage.cshtml?classes_id=" + classes);
+    }
+
+    var cla = "select classes_year,majors_name from classes inner join majors on classes.majors_id = majors.id where classes.id = " + classes;
+    var cour = "select courses_name from courses where id = " + courses;
+    var cla1 = db.QuerySingle(cla);
+    var cour1 = db.QuerySingle(cour);
+    <span>@cla1.classes_year@cla1.majors_name</span>
+    <span>@cour1.courses_name</span>
+
+    string[] courses_id = (p.courses_id).Split(',');
+    foreach (var row in courses_id)
+    {
+        if (row == courses)
+        {
+            prompt = 2;
+            break;
+        }
+    }
+    if (prompt == 2)
+    {
+        var studentsList = "select *from students where classes_id = " + classes;
+        <form action="~/rollcall_adddo.cshtml" method="post">
+            <table id="table_id" class="display">
+                <thead>
+                    <tr>
+                        <th>学生</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                @{
+                    var temp = 1;
+                }
+                <tbody>
+                    @foreach (var row3 in db.Query(studentsList))
+                    {
+
+                        <tr>
+                            <td class="center"><h1>@row3.students_name</h1></td>
+                            <td class="center" style="width:30%">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 1" value="1" checked="checked" />
+                                            <label for="@row3.id 1">
+                                                <a class="btn btn-success" onclick="onclickRadio(1)">正常</a>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 2" value="2" />
+                                            <label for="@row3.id 2">
+                                                <a class="btn btn-danger" onclick="onclickRadio(2)">旷课</a>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 3" value="3" />
+                                            <label for="@row3.id 3">
+                                                <a class="btn btn-primary" onclick="onclickRadio(3)">请假</a>
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 4" value="4" />
+                                            <label for="@row3.id 4">
+                                                <a class="btn btn-warning" onclick="onclickRadio(4)">迟到</a>
+                                            </label>
+                                        </td>
+
+
+                                    </tr>
+                                </table>
+                                @*<script>
+                                        function onclickRadio(n) {
+                                            var statu = document.getElementByName("statu_@temp").getElementById("statu"+n).get;
+                                            statu.checked = true;
+                                        }
+                                    </script>*@
+                                <input type="hidden" name="students_id" id="students_id" value=@row3.id />
+                            </td>
+                        </tr>
+
+                        temp++;
+                    }
+                </tbody>
+            </table>
+            <input type="hidden" name="classes_id" id="classes_id" value=@db.QuerySingle(studentsList).classes_id />
+            <input type="hidden" name="time" id="time" value="" />
+            <script>
+                function showTime() {
+                    nowtime = new Date();
+                    year = nowtime.getFullYear();
+                    month = nowtime.getMonth() + 1;
+                    date = nowtime.getDate();
+                    document.getElementById("time").value = year + "年" + month + "月" + date + "" + nowtime.toLocaleTimeString();
+                }
+
+                setInterval("showTime()", 1000);
+            </script>
+            <input type="hidden" name="courses_id" id="courses_id" value=@courses />
+            <a class="btn btn-primary" href="~/count.cshtml?cid=@classes&coid=@courses">统计</a>
+            <span id="hide"><button class="btn" type="submit" id="hide">提交</button></span>
+            <div id="top"></div>
+        </form>
+    }
+    else
+    {
+        <h3><span id="sp" style="color:red">该班级不存在此门课程！</span></h3>
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#hide').click(function (event) {
+            $('#hide').toggle();
+        });
+        $("#draggable").draggable();
+    });
+</script>

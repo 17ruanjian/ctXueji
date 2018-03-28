@@ -1,0 +1,5 @@
+﻿@{
+    var db = Database.Open("ctXueji");
+    var classes_id = Request.QueryString["classes_id"];
+    Response.Redirect("~/rollcall_add?classes_id="+classes_id);
+}

@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id";
+}
+@if (Convert.ToInt16(Session["authority"]) == 2)
+{
+    <a class="btn btn-info" href="~/classes_add.cshtml">新增班级</a>
+}
+@if (Convert.ToInt16(Session["authority"]) == 3)
+{
+    list += " where teachers_name = " + "'" + Session["name"] + "'";
+}
+<table id="table_id" class="display">
+    <thead>
+        <tr class="t">
+            <th>班级</th>
+            <th>辅导员</th>
+            @if (Convert.ToInt16(Session["authority"]) == 2)
+            {
+                <th>操作</th>
+            }
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in db.Query(list))
+        {
+            <tr class="t">
+                @if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
+                {
+                    <td class="center"><a href="~/students.cshtml?classe_id=@row.id">@row.classes_year@row.majors_name</a></td>
+                }
+                else
+                {
+                    <td class="center">@row.classes_year@row.majors_name</td>
+                }
+                <td class="center">@row.teachers_name</td>
+                @if (Convert.ToInt16(Session["authority"]) == 2)
+                {
+                    <td class="center">
+                        <a class="btn btn-danger" href="~/classes_del.cshtml?id=@row.id">删除</a>
+                        <a class="btn btn-primary" href="~/classes_edit.cshtml?id=@row.id">修改</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

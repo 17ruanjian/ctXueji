@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    var id = Request.QueryString["id"];
+    var list = "select *from courses where id =" + id;
+    var row = db.QuerySingle(list);
+    if (IsPost)
+    {
+        var coid = Request.Form["id"];
+        var delete = "delete from courses where id=@0";
+        db.Execute(delete, coid);
+
+        var classes = "select id,courses_id from classes";
+        foreach (var row2 in db.Query(classes))
+        {
+            string[] courses_id = row2.courses_id.Split(',');
+            string num = "";
+            for (int i = 0; i < courses_id.Length; i++)
+            {
+                if (id == courses_id[courses_id.Length - 1])
+                {
+                    if (id == courses_id[i])
+                    {
+                        continue;
+                    }
+                    if (i == courses_id.Length - 2 || i == courses_id.Length - 1)
+                    {
+                        num += courses_id[i];
+                    }
+                    else
+                    {
+                        num += courses_id[i] + ',';
+                    }
+                }
+                else
+                {
+                    if (id == courses_id[i])
+                    {
+                        continue;
+                    }
+                    if (i == courses_id.Length - 1)
+                    {
+                        num += courses_id[i];
+                    }
+                    else
+                    {
+                        num += courses_id[i] + ',';
+                    }
+                }
+            }
+            var update = "update classes set courses_id = @1 where id = @0";
+            db.Execute(update, row2.id, num);
+        }
+
+        Response.Redirect("~/courses");
+    }
+}
+<form method="post">
+    <dl>
+        <dt class="page-header">课程名称：@row.courses_name</dt>
+        @{ 
+            var tid = row.teachers_id;
+            var tlist = "select *from teachers where id = " + tid;
+            var row1 = db.QuerySingle(tlist);
+        }
+        <dt class="page-header">指导教师：@row1.teachers_name</dt>
+    </dl>
+    <input type="hidden" id="id" name="id" value=@id>
+    <input class="btn btn-primary" type="submit" value="确认删除" />
+</form>

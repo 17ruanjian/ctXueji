@@ -1,0 +1,54 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var db = Database.Open("ctXueji");
+    var list = "select *from teachers where teachers_type = 2";
+    var majorslist = "select *from majors";
+    if (IsPost)
+    {
+        var year = Request.Form["year"];
+        var majors = Request.Form["majors"];
+        var teachers = Request.Form["teachers"];
+        var coid = Request.Form["coid"];
+        var addclasses = "insert into classes (majors_id,classes_year,teachers_id,courses_id) values(@0,@1,@2,@3)";
+        db.Execute(addclasses, majors, year, teachers, coid);
+        Response.Redirect("~/classes");
+    }
+}
+<form method="post" class="navbar-form">
+    <strong>专业：</strong><br />
+    <select class="form-control" id="majors" name="majors">
+        @foreach (var row2 in db.Query(majorslist))
+        {
+            <option value=@row2.id>@row2.majors_name</option>
+        }
+    </select><br />
+    <strong>年份：</strong><br />
+    <input class="form-control" style="width:100px;" type="text" id="year" name="year" />
+    <br />
+    <strong>指导员：</strong>
+    <br />
+    <select class="form-control" id="teachers" name="teachers">
+        @foreach (var row in db.Query(list))
+            {
+            <option value="@row.id">
+                @row.teachers_name
+            </option>
+        }
+    </select>
+    <br />
+    <strong>课程：</strong><br />
+    @{ 
+        var listc = "select *from courses";
+    }
+    @foreach (var courses in db.Query(listc))
+    {
+        <input type="checkbox" name="coid" id="coid" value=@courses.id>@courses.courses_name<br />
+    }
+    <br />
+    <br />
+    <input class="btn btn-primary" type="submit" value="确认增加" />
+</form>

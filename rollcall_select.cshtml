@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var time = Request.QueryString["time"];
+    var class_id = Request.QueryString["cid"];
+    var db = Database.Open("ctXueji");
+    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall where classes_id=" + class_id + " and (user_power=1 or user_power=3) group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
+    var temp = db.QuerySingle(list);
+}
+
+<font id="nowTime" color=grey size="5"></font>
+<script>
+    function showTime() {
+        nowtime = new Date();
+        year = nowtime.getFullYear();
+        month = nowtime.getMonth() + 1;
+        date = nowtime.getDate();
+        document.getElementById("nowTime").innerText = year + "年" + month + "月" + date + "" + nowtime.toLocaleTimeString();
+    }
+    setInterval("showTime()", 1000);
+</script>
+<font size="10" color=bule>-选择对比的课程-</font>
+<table class="table table-striped table-bordered table-hover bootstrap-datatable datatable">
+    <tr class="t">
+        <th>班级</th>
+        <th>课程</th>
+        <th>时间</th>
+        <th>操作人</th>
+    </tr>
+    @if (temp == null) { }
+    else
+    {
+        foreach (var row in db.Query(list))
+        {
+            <tr class="t">
+                @{
+                    var cid = row.classes_id;
+                    var coid = row.courses_id;
+                    var classList = "select *from classes where id=" + cid;
+                    var row1 = db.QuerySingle(classList);
+                    var mid = row1.majors_id;
+                    var majorsList = "select *from majors where id=" + mid;
+                    var row2 = db.QuerySingle(majorsList);
+                    var coursesList = "select *from courses where id=" + coid;
+                    var row3 = db.QuerySingle(coursesList);
+                }
+                <td class="center">@row1.classes_year @row2.majors_name</td>
+                <td class="center">@row3.courses_name</td>
+                <td class="center"><a href="~/rollcall_contrast.cshtml?time=@time&time_sc=@row.time">@row.time</a></td>
+                <td class="center">@row.user_name</td>
+            </tr>
+        }
+    }
+
+</table>

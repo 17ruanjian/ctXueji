@@ -72,7 +72,7 @@
             }
             @if (Convert.ToInt16(Session["authority"]) == 1 || Convert.ToInt16(Session["authority"]) == 4) //讲师
             {
-                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"]+"'";
+                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"] + "'";
                 var r = db.QuerySingle(js_teacher);
                 string temp1 = r.majors_id;
                 string[] temparry1 = temp1.Split(',');
@@ -123,19 +123,79 @@ else
         }
         <select class="form-control" id="classes" name="classes" onchange="changePost(1)">
             <option>--请选择--</option>
-            @foreach (var row in db.Query(list))
-            {
-                {
-                    var major_id = row.majors_id;
-                    var majorsList = "select majors_name from majors where id = " + major_id;
-                    var row1 = db.QuerySingle(majorsList);
-                    <option value=@row.id @if (row.id == row_s.id) { @: selected="selected"
-                            }>
-                        @row.classes_year @row1.majors_name
-                    </option>
-                }
 
+            @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 4)//导员
+            {
+                var tid = "select *from teachers where teachers_name='" + teacher_name + "'";
+                var teachers_id = db.QuerySingle(tid);
+                list += " where teachers_id=" + teachers_id.id;//教师登录权限显示自己的班级
+
+                foreach (var row in db.Query(list))
+                {
+                    {
+                        var major_id = row.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row.id @if (row.id == row_s.id) { @: selected="selected"
+                                }>
+                            @row.classes_year @row1.majors_name
+                        </option>
+                    }
+
+                }
             }
+            @if (Convert.ToInt16(Session["authority"]) == 1 || Convert.ToInt16(Session["authority"]) == 4) //讲师
+            {
+                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"] + "'";
+                var r = db.QuerySingle(js_teacher);
+                string temp1 = r.majors_id;
+                string[] temparry1 = temp1.Split(',');
+                foreach (var i in temparry1)
+                {
+                    var majors_id = i;
+                    var js_class = "select *from classes where majors_id = " + i;
+                    foreach (var row_jd in db.Query(js_class))
+                    {
+                        var major_id = row_jd.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row_jd.id @if (row_jd.id == row_s.id) { @: selected="selected"
+                                }>
+                            @row_jd.classes_year @row1.majors_name
+                        </option>
+                    }
+                }
+            }
+            @if (Convert.ToInt16(Session["authority"]) == 2)//LD
+            {
+                foreach (var row in db.Query(list))
+                {
+                    {
+                        var major_id = row.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row.id @if (row.id == row_s.id) { @: selected="selected"
+                                }>
+                            @row.classes_year @row1.majors_name
+                        </option>
+                    }
+
+                }
+            }
+
+            @*@foreach (var row in db.Query(list))
+                {
+                    {
+                        var major_id = row.majors_id;
+                        var majorsList = "select majors_name from majors where id = " + major_id;
+                        var row1 = db.QuerySingle(majorsList);
+                        <option value=@row.id @if (row.id == row_s.id) { @: selected="selected"
+                                }>
+                            @row.classes_year @row1.majors_name
+                        </option>
+                    }
+
+                }*@
         </select>
         <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
             <option>--请选择--</option>
@@ -297,6 +357,6 @@ else
         $('#hide').click(function (event) {
             $('#hide').toggle();
         });
-        
+        $("#draggable").draggable();
     });
 </script>

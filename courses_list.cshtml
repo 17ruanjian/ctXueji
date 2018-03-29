@@ -13,9 +13,9 @@
 }
 @if (Convert.ToInt16(Session["authority"]) == 1)
 {
-    var listCommand = "select classes_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
+    var listCommand = "select majors_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
     var cx = db.QuerySingle(listCommand);
-    var jsskbj = (cx.classes_id).Split(',');
+    var jsskbj = (cx.majors_id).Split(',');
     <i><strong>班级（详情）</strong></i><br />
     <table id="table_id" class="display">
         <thead>
@@ -27,7 +27,7 @@
         <tbody>
             @foreach (var c in jsskbj)
             {
-                list = "select * from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id where classes.id = " + c;
+                list = "select * from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id where classes.majors_id = " + c;
 
                 foreach (var row in db.Query(list))
                 {

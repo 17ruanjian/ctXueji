@@ -53,7 +53,8 @@
     <form name="form1" method="post" class="navbar-form">
         <select class="form-control" id="classes" name="classes" onchange="changePost(1)">
             <option>--请选择--</option>
-            @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 4)//导员
+
+            @if (Convert.ToInt16(Session["authority"]) == 3)//导员
             {
                 var tid = "select *from teachers where teachers_name='" + teacher_name + "'";
                 var teachers_id = db.QuerySingle(tid);
@@ -70,9 +71,9 @@
 
                 }
             }
-            @if (Convert.ToInt16(Session["authority"]) == 1 || Convert.ToInt16(Session["authority"]) == 4) //讲师
+            @if (Convert.ToInt16(Session["authority"]) == 1) //讲师
             {
-                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"] + "'";
+                var js_teacher = "select *from teachers where teachers_name = '" + teacher_name + "'";
                 var r = db.QuerySingle(js_teacher);
                 string temp1 = r.majors_id;
                 string[] temparry1 = temp1.Split(',');
@@ -102,6 +103,7 @@
 
                 }
             }
+
         </select>
         <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
             <option>--请选择--</option>
@@ -124,7 +126,7 @@ else
         <select class="form-control" id="classes" name="classes" onchange="changePost(1)">
             <option>--请选择--</option>
 
-            @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 4)//导员
+            @if (Convert.ToInt16(Session["authority"]) == 3)//导员
             {
                 var tid = "select *from teachers where teachers_name='" + teacher_name + "'";
                 var teachers_id = db.QuerySingle(tid);
@@ -144,9 +146,9 @@ else
 
                 }
             }
-            @if (Convert.ToInt16(Session["authority"]) == 1 || Convert.ToInt16(Session["authority"]) == 4) //讲师
+            @if (Convert.ToInt16(Session["authority"]) == 1) //讲师
             {
-                var js_teacher = "select *from teachers where teachers_name = '" + Session["name"] + "'";
+                var js_teacher = "select *from teachers where teachers_name = '" + teacher_name + "'";
                 var r = db.QuerySingle(js_teacher);
                 string temp1 = r.majors_id;
                 string[] temparry1 = temp1.Split(',');

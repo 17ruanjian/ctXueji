@@ -5,7 +5,7 @@
         Response.Redirect("~/login.cshtml");
     }
     var db = Database.Open("ctXueji");
-    var list = "select *from teachers where teachers_type = 2";
+    var list = "select *from teachers where teachers_type = 2 or teachers_type = 3";
     var majorslist = "select *from majors";
     if (IsPost)
     {

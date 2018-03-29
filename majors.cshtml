@@ -7,13 +7,19 @@
     }
     var list = "select *from majors";
 }
-<a class="btn btn-info" href="~/majors_add.cshtml">新增专业</a>
+@if (Convert.ToInt16(Session["authority"]) == 2)
+{
+    <a class="btn btn-info" href="~/majors_add.cshtml">新增专业</a>
+}
 <table id="table_id" class="display">
     <thead>
         <tr class="t">
             <th>专业ID</th>
             <th>专业名称</th>
-            <th>操作</th>
+            @if (Convert.ToInt16(Session["authority"]) == 2)
+            {
+                <th>操作</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -21,8 +27,18 @@
         {
             <tr class="t">
                 <td class="center">@row.id</td>
-                <td class="center"><a href="~/majors_edit.cshtml?id=@row.id">@row.majors_name</a></td>
-                <td class="center"><a class="btn btn-danger" href="~/majors_del.cshtml?id=@row.id">删除</a></td>
+                @if (Convert.ToInt16(Session["authority"]) == 2)
+                {
+                    <td class="center"><a href="~/majors_edit.cshtml?id=@row.id">@row.majors_name</a></td>
+                }
+                else
+                {
+                    <td class="center">@row.majors_name</td>
+                }
+                @if (Convert.ToInt16(Session["authority"]) == 2)
+                {
+                    <td class="center"><a class="btn btn-danger" href="~/majors_del.cshtml?id=@row.id">删除</a></td>
+                }
             </tr>
         }
     </tbody>

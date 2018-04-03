@@ -11,7 +11,7 @@
         string[] temparry1 = temp1.Split(',');
         var courses_id = Request.Form["courses_id"];
         var classes_id = Request.Form["classes_id"];
-        var time = Request.Form["time"];
+        var time = Convert.ToString(DateTime.Now);
         var b = temparry1.Count();
         for(int i = 0; i < b; i++)
         {

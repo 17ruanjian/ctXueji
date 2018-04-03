@@ -10,7 +10,7 @@
     <thead>
         <tr>
             <th>学生姓名</th>
-            <th>迟到/旷课 次数</th>
+            <th>旷课 次数</th>
             <th>出勤率</th>
         </tr>
     </thead>
@@ -38,7 +38,7 @@
                     {
                         classes_z++;
                         z++;
-                        if (row3.state == 1)
+                        if (row3.state == 1||row3.state == 4)
                         {
                             continue;
 

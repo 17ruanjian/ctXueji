@@ -6,7 +6,7 @@
     }
     var db = Database.Open("ctXueji");
     var classes_id = Request.QueryString["classes_id"];
-    var classeaaaaa_id = Request.QueryString["classe_id"];
+    var classea_id = Request.QueryString["classe_id"];
     var list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id";
     if (IsPost)
     {
@@ -14,9 +14,9 @@
         var value = Request.Form["value"];
         list += " where students_name like '%" + value + "%' or students_number like '%" + value + "%'";
     }
-    if (classeaaaaa_id != null)
+    if (classea_id != null)
     {
-        list += " where classes_id = " + classeaaaaa_id;
+        list += " where classes_id = " + classea_id;
     }
 }
 @if (Session["name"] != null)
@@ -25,11 +25,11 @@
     {
         if (classes_id == null)
         {
-            <a class="btn btn-info" href="~/students_add.cshtml">新增学生</a>
+            <a class="btn btn-info" href="~/students_add.cshtml?tcid=-1">新增学生</a>
         }
         else
         {
-            <a class="btn btn-info" href="~/students_add.cshtml">新增学生</a>
+            <a class="btn btn-info" href="~/students_add.cshtml?tcid=@classes_id">新增学生</a>
         }
     }
     <table id="table_id" class="display">
@@ -50,7 +50,7 @@
         <tbody>
         @if (Convert.ToInt16(Session["authority"]) == 3)
         {
-            if (classeaaaaa_id == null)
+            if (classea_id == null)
             {
                 list += " inner join teachers on classes.teachers_id = teachers.id where teachers.teachers_name = " + "'" + Session["name"] + "'";
             }
@@ -79,7 +79,7 @@
                 </tr>
             }
         }
-        @if (classeaaaaa_id == null && Convert.ToInt16(Session["authority"]) == 1)
+        @if (classea_id == null && Convert.ToInt16(Session["authority"]) == 1)
         {
             var listCommand = "select classes_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
             var cx = db.QuerySingle(listCommand);

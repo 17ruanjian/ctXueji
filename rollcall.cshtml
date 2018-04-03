@@ -59,7 +59,7 @@
                     foreach (var row4 in db.Query(cqlist))
                     {
                         z++;
-                        if (row4.state == 1)
+                        if (row4.state == 1 || row4.state == 4)
                         {
                             continue;
                         }
@@ -106,7 +106,7 @@
 }
 else
 {
-    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall where user_power=" + Convert.ToInt16(Session["authority"]) + " group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
+    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall where user_name='" + Convert.ToString(Session["name"]) + "' group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
 
     <font id="nowTime" color=grey size="5"></font>
 
@@ -157,7 +157,7 @@ else
                     foreach (var row4 in db.Query(cqlist))
                     {
                         z++;
-                        if (row4.state == 1)
+                        if (row4.state == 1||row4.state == 4)
                         {
                             continue;
                         }

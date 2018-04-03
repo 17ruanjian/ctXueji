@@ -12,7 +12,12 @@
     <script type="text/javascript" charset="utf8" src="~/scripts/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function () {
-            $('#table_id').DataTable();
+            $('#table_id').DataTable(
+                {
+                    "paging": false,
+                    "ordering": false
+                });
+
         });
     </script>
 </head>
@@ -70,12 +75,3 @@
     </div>
 </body>
 </html>
-@*<script>
-        $(document).ready(function () {
-            $('#table_id').DataTable(
-                {
-                    "paging": false
-                });
-
-        });
-    </script>*@

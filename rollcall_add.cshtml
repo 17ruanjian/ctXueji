@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/_xuejiLayout.cshtml";
+    Layout = "~/_rollcallLayout.cshtml";
     var db = Database.Open("ctXueji");
     if (Session["name"] == null || Session["username"] == null)
     {
@@ -297,10 +297,10 @@ else
                                         <td>
                                             <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 2" value="2" />
                                             <label for="@row3.id 2">
-                                                <a class="btn btn-danger" onclick="onclickRadio(2)">旷课</a>
+                                                <a class="btn btn-danger" onclick="onclickRadio(2)">缺课</a>
                                             </label>
                                         </td>
-                                        <td>
+                                        @*<td>
                                             <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 3" value="3" />
                                             <label for="@row3.id 3">
                                                 <a class="btn btn-primary" onclick="onclickRadio(3)">请假</a>
@@ -311,7 +311,7 @@ else
                                             <label for="@row3.id 4">
                                                 <a class="btn btn-warning" onclick="onclickRadio(4)">迟到</a>
                                             </label>
-                                        </td>
+                                        </td>*@
 
 
                                     </tr>
@@ -359,9 +359,5 @@ else
         $('#hide').click(function (event) {
             $('#hide').toggle();
         });
-        $("#draggable").draggable();
-    });
-</script>;
-        $("#draggable").draggable();
     });
 </script>

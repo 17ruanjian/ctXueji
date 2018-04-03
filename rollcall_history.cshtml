@@ -8,22 +8,22 @@
     var db = Database.Open("ctXueji");
     var list = "select *from rollcall where time = '" + time + "'";
     var ld = db.QuerySingle(list);
-    //if (IsPost)
-    //{
-    //    var id = Request.Form["id"];
-    //    string temp1 = id;
-    //    string[] temparry = temp1.Split(',');
-    //    var b = temparry.Count();
-    //    for(int x = 0; x < b; x++)
-    //    {
-    //        int t = x + 1;
-    //        var statu = Request.Form["statu_"+t];
-    //        var update = "update rollcall set state = @0 where id = @1";
-    //        db.Execute(update, statu, temparry[x]);
-    //    }
-    //    Response.Redirect("~/selectm.cshtml");
-    //}
-}
+    if (IsPost)
+    {
+        var id = Request.Form["id"];
+        string temp1 = id;
+        string[] temparry = temp1.Split(',');
+        var b = temparry.Count();
+        for (int x = 0; x < b; x++)
+        {
+            int t = x + 1;
+            var statu = Request.Form["statu_" + t];
+            var update = "update rollcall set state = @0 where id = @1";
+            db.Execute(update, statu, temparry[x]);
+        }
+        Response.Redirect("~/rollcall.cshtml");
+    }}
+
 @if (Convert.ToInt16(Session["authority"]) == 2 && Convert.ToInt16(ld.user_power) == 2)
 {
     <a class="btn btn-info" href="~/rollcall_select.cshtml?time=@time&cid=@ld.classes_id">对比数据</a>
@@ -50,18 +50,18 @@
                         <div class="btn btn-success">正常</div>
                     </td>
                 }
-                else if (row.state == 2)
+                @*else if (row.state == 2)
                 {
                     <td>
                         <div class="btn btn-danger">旷课</div>
                     </td>
-                }
-                else if (row.state == 3)
-                {
-                    <td>
-                        <div class="btn btn-primary">请假</div>
-                    </td>
-                }
+                }*@
+                @*else if (row.state == 3)
+                    {
+                        <td>
+                            <div class="btn btn-primary">请假</div>
+                        </td>
+                    }*@
                 else if (row.state == 4)
                 {
                     <td>
@@ -72,21 +72,13 @@
                 {
                     <td>
                         <input type="hidden" id="id" name="id" value=@row.id />
-                        <input type="radio" class="radio-inline" name="statu_@temp" id="statu" value=2 />
-                        <a class="btn btn-danger">旷课</a>&nbsp; &nbsp;
-                        <input type="radio" class="radio-inline" name="statu_@temp" id="statu" value=4 />
-                        <a class="btn btn-warning">迟到</a>
-                    </td>
-                    temp++;
-                }
-            </tr>
-
-        }
-
-    </table>
-    @*<input id="button" class="btn" type="submit" value="确认"/>*@
-</form>
-
+                        <input type="radio" class="radio-inline" name="statu_@temp" id="@row.id 1" value=2 />
+                        <label for="@row.id 1">
+                            <a class="btn btn-danger">旷课</a>
+                        </label>
+                        &nbsp; &nbsp;
+                        <input type="radio" class="radio-inline" name="statu_@temp" id="@row.id 2" value=4 />
+                        <label for="@row.id 2">
                             <a class="btn btn-warning">迟到</a>
                         </label>
                     </td>

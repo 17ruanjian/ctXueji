@@ -31,7 +31,7 @@
         var exams = "select *from exams where id = " + temp;
         var row1 = db.QuerySingle(exams, temp);
         <tr class="t">
-            <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
+                <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
             @if (row1.exams_type == 1)
             {
                 <td class="center">期中考试</td>

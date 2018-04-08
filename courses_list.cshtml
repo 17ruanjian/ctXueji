@@ -7,6 +7,11 @@
     }
     var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id";
 }
+<script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+</script>
 @if (Convert.ToInt16(Session["authority"]) == 3)
 {
     list += " where teachers_name = " + "'" + Session["name"] + "'";

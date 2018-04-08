@@ -7,6 +7,11 @@
     var db = Database.Open("ctXueji");
     var list = "select *from teachers";
 }
+<script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+</script>
 @if (Convert.ToInt16(Session["authority"]) == 2)
 {
     <a class="btn btn-info" href="~/teachers_add.cshtml">新增教师</a>

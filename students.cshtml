@@ -19,6 +19,11 @@
         list += " where classes_id = " + classea_id;
     }
 }
+<script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+</script>
 @if (Session["name"] != null)
 {
     if (Convert.ToInt16(Session["authority"]) == 2)
@@ -48,46 +53,12 @@
             </tr>
         </thead>
         <tbody>
-        @if (Convert.ToInt16(Session["authority"]) == 3)
-        {
-            if (classea_id == null)
+            @if (Convert.ToInt16(Session["authority"]) == 3)
             {
-                list += " inner join teachers on classes.teachers_id = teachers.id where teachers.teachers_name = " + "'" + Session["name"] + "'";
-            }
-            foreach (var row in db.Query(list))
-            {
-                <tr class="t">
-                    <td class="center">@row.students_number</td>
-                    <td class="center">@row.students_name</td>
-                    <td class="center">@row.students_sex</td>
-                    <td class="center">@row.students_age</td>
-                    <td class="center">@row.classes_year@row.majors_name</td>
-                    <td class="center">
-                        @if (row.students_status == 1)
-                        {
-                            <a class="btn btn-success">在籍</a>
-                        }
-                        else if (row.students_status == 2)
-                        {
-                            <a class="btn btn-warning">挂籍</a>
-                        }
-                        else
-                        {
-                            <a class="btn btn-danger">开除</a>
-                        }
-                    </td>
-                </tr>
-            }
-        }
-        @if (classea_id == null && Convert.ToInt16(Session["authority"]) == 1)
-        {
-            var listCommand = "select classes_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
-            var cx = db.QuerySingle(listCommand);
-            var jsskbj = (cx.classes_id).Split(',');
-
-            foreach (var c in jsskbj)
-            {
-                list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id where classes_id = " + c;
+                if (classea_id == null)
+                {
+                    list += " inner join teachers on classes.teachers_id = teachers.id where teachers.teachers_name = " + "'" + Session["name"] + "'";
+                }
                 foreach (var row in db.Query(list))
                 {
                     <tr class="t">
@@ -113,35 +84,69 @@
                     </tr>
                 }
             }
-        }
-        @if (Convert.ToInt16(Session["authority"]) == 2)
-        {
-            foreach (var row in db.Query(list))
+            @if (classea_id == null && Convert.ToInt16(Session["authority"]) == 1)
             {
-                <tr class="t">
-                    <td class="center">@row.students_number</td>
-                    <td class="center"><a href="~/students_edit.cshtml?id=@row.id&cid=@row.classes_id">@row.students_name</a></td>
-                    <td class="center">@row.students_sex</td>
-                    <td class="center">@row.students_age</td>
-                    <td class="center">@row.classes_year@row.majors_name</td>
-                    <td class="center">
-                        @if (row.students_status == 1)
-                        {
-                            <a class="btn btn-success">在籍</a>
-                        }
-                        else if (row.students_status == 2)
-                        {
-                            <a class="btn btn-warning">挂籍</a>
-                        }
-                        else
-                        {
-                            <a class="btn btn-danger">开除</a>
-                        }
-                    </td>
-                    <td class="center"><a class="btn btn-danger" href="~/students_del.cshtml?id=@row.id">删除</a></td>
-                </tr>
+                var listCommand = "select classes_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
+                var cx = db.QuerySingle(listCommand);
+                var jsskbj = (cx.classes_id).Split(',');
+
+                foreach (var c in jsskbj)
+                {
+                    list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id where classes_id = " + c;
+                    foreach (var row in db.Query(list))
+                    {
+                        <tr class="t">
+                            <td class="center">@row.students_number</td>
+                            <td class="center">@row.students_name</td>
+                            <td class="center">@row.students_sex</td>
+                            <td class="center">@row.students_age</td>
+                            <td class="center">@row.classes_year@row.majors_name</td>
+                            <td class="center">
+                                @if (row.students_status == 1)
+                                {
+                                    <a class="btn btn-success">在籍</a>
+                                }
+                                else if (row.students_status == 2)
+                                {
+                                    <a class="btn btn-warning">挂籍</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-danger">开除</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
             }
-        }
+            @if (Convert.ToInt16(Session["authority"]) == 2)
+            {
+                foreach (var row in db.Query(list))
+                {
+                    <tr class="t">
+                        <td class="center">@row.students_number</td>
+                        <td class="center"><a href="~/students_edit.cshtml?id=@row.id&cid=@row.classes_id">@row.students_name</a></td>
+                        <td class="center">@row.students_sex</td>
+                        <td class="center">@row.students_age</td>
+                        <td class="center">@row.classes_year@row.majors_name</td>
+                        <td class="center">
+                            @if (row.students_status == 1)
+                            {
+                                <a class="btn btn-success">在籍</a>
+                            }
+                            else if (row.students_status == 2)
+                            {
+                                <a class="btn btn-warning">挂籍</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-danger">开除</a>
+                            }
+                        </td>
+                        <td class="center"><a class="btn btn-danger" href="~/students_del.cshtml?id=@row.id">删除</a></td>
+                    </tr>
+                }
+            }
         </tbody>
     </table>
 }

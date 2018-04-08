@@ -7,6 +7,11 @@
     }
     var list = "select *from majors";
 }
+<script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+</script>
 @if (Convert.ToInt16(Session["authority"]) == 2)
 {
     <a class="btn btn-info" href="~/majors_add.cshtml">新增专业</a>

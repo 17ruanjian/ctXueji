@@ -105,13 +105,35 @@
             }
 
         </select>
-        <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
-            <option>--请选择--</option>
-            @foreach (var row2 in db.Query(coursesList))
-            {
-                <option value=@row2.id>@row2.courses_name</option>
-            }
-        </select>&nbsp;
+
+
+        @if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
+        {
+            <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+                <option>--请选择--</option>
+                @foreach (var row2 in db.Query(coursesList))
+                {
+                    <option value=@row2.id>@row2.courses_name</option>
+                }
+            </select>@:&nbsp;
+        }
+        else
+        {
+            var tname = "select * from teachers where teachers_name = '" + teacher_name + "'";
+            var co = db.QuerySingle(tname);
+            string coid = co.courses_id;
+            string[] a = coid.Split(',');
+            <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+                <option>--请选择--</option>
+                @foreach (var i in a)
+                {
+                    var majorslist = "select * from courses where id=" + i;
+                    var m_name = db.QuerySingle(majorslist);
+                    <option value=@m_name.id>@m_name.courses_name</option>
+                }
+            </select>@:&nbsp;
+}
+
         <a class="btn btn-primary" href="~/rollcall.cshtml">记录查询</a>
     </form>
 }
@@ -199,19 +221,38 @@ else
 
                 }*@
         </select>
-        <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
-            <option>--请选择--</option>
-            @{
-                string temp = row_s.courses_id;
-                string[] temparry = temp.Split(',');
-            }
-            @foreach (var i in temparry)
-            {
-                var listcourses = "select *from courses where id=" + i;
-                var c_name = db.QuerySingle(listcourses);
-                <option value=@c_name.id>@c_name.courses_name</option>
-            }
-        </select>&nbsp;
+        @if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
+        {
+            <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+                <option>--请选择--</option>
+                @{
+                    string temp = row_s.courses_id;
+                    string[] temparry = temp.Split(',');
+                }
+                @foreach (var i in temparry)
+                {
+                    var listcourses = "select *from courses where id=" + i;
+                    var c_name = db.QuerySingle(listcourses);
+                    <option value=@c_name.id>@c_name.courses_name</option>
+                }
+            </select>@:&nbsp;
+}
+        else
+        {
+            var tname = "select * from teachers where teachers_name = '" + teacher_name + "'";
+            var co = db.QuerySingle(tname);
+            string coid = co.courses_id;
+            string[] a = coid.Split(',');
+            <select class="form-control" id="courses" name="courses" onchange="changePost(2)">
+                <option>--请选择--</option>
+                @foreach (var i in a)
+                {
+                    var majorslist = "select * from courses where id=" + i;
+                    var m_name = db.QuerySingle(majorslist);
+                    <option value=@m_name.id>@m_name.courses_name</option>
+                }
+            </select>@:&nbsp;
+}
         <a class="btn btn-primary" href="~/rollcall.cshtml">记录查询</a>
     </form>
 }
@@ -301,17 +342,17 @@ else
                                             </label>
                                         </td>
                                         @*<td>
-                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 3" value="3" />
-                                            <label for="@row3.id 3">
-                                                <a class="btn btn-primary" onclick="onclickRadio(3)">请假</a>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 4" value="4" />
-                                            <label for="@row3.id 4">
-                                                <a class="btn btn-warning" onclick="onclickRadio(4)">迟到</a>
-                                            </label>
-                                        </td>*@
+                                                <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 3" value="3" />
+                                                <label for="@row3.id 3">
+                                                    <a class="btn btn-primary" onclick="onclickRadio(3)">请假</a>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 4" value="4" />
+                                                <label for="@row3.id 4">
+                                                    <a class="btn btn-warning" onclick="onclickRadio(4)">迟到</a>
+                                                </label>
+                                            </td>*@
 
 
                                     </tr>

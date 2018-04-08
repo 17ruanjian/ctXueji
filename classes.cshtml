@@ -7,6 +7,11 @@
     var db = Database.Open("ctXueji");
     var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id";
 }
+<script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+</script>
 @if (Convert.ToInt16(Session["authority"]) == 2)
 {
     <a class="btn btn-info" href="~/classes_add.cshtml">新增班级</a>
@@ -24,7 +29,6 @@
             {
                 <th>操作</th>
             }
-
         </tr>
     </thead>
     <tbody>

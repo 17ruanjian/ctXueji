@@ -9,21 +9,6 @@
     var coursesList = "select *from courses";
     var classes_id = Request.QueryString["classes_id"];
     var teacher_name = Session["name"];
-
-
-    //var js_teacher = "select *from teachers where teachers_name = " + Session["name"];
-    //var r = db.QuerySingle(js_teacher);
-    //string temp1 = r.courses_id;
-    //string[] temparry1 = temp1.Split(',');
-    //foreach (var i in temparry1)
-    //{
-    //    var majors_id = i;
-    //    var js_class = "select *from classes where majors_id = " + i;
-    //    foreach(var row_jd in db.Query(js_class))
-    //    {
-
-    //    }
-    //}
 }
 <style type="text/css">
 
@@ -44,6 +29,7 @@
 
     setInterval("showTime()", 1000);
 </script>
+
 <blockquote class="pull-right">
     <a href="#top">↓下去↓</a>
     <small>GO <cite title="Source Title">DOWN！</cite></small>
@@ -341,28 +327,10 @@ else
                                                 <a class="btn btn-danger" onclick="onclickRadio(2)">缺课</a>
                                             </label>
                                         </td>
-                                        @*<td>
-                                                <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 3" value="3" />
-                                                <label for="@row3.id 3">
-                                                    <a class="btn btn-primary" onclick="onclickRadio(3)">请假</a>
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 4" value="4" />
-                                                <label for="@row3.id 4">
-                                                    <a class="btn btn-warning" onclick="onclickRadio(4)">迟到</a>
-                                                </label>
-                                            </td>*@
 
 
                                     </tr>
                                 </table>
-                                @*<script>
-                                        function onclickRadio(n) {
-                                            var statu = document.getElementByName("statu_@temp").getElementById("statu"+n).get;
-                                            statu.checked = true;
-                                        }
-                                    </script>*@
                                 <input type="hidden" name="students_id" id="students_id" value=@row3.id />
                             </td>
                         </tr>

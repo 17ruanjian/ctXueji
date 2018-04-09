@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+</head>
+<body>
+    <style>
+        #alert{
+            background-color: #ff5858;
+            border-color: #c40000;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <H2>操作超时，点名需在每节大课上课前5分钟到上课后15分钟内进行，如有疑问，请咨询赵德兵老师</H2>
+                <p class="alert alert-info" id="alert">
+                    <b id="second">5</b>秒后回到主页 <a href="javascript:goBack();">返回</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+var sec = document.getElementById("second");
+        var i = 6;
+        var timer = setInterval(function () {
+            i--;
+            sec.innerHTML = i;
+            if (i == 1) {
+                window.location.href = "rollcall_add.cshtml";
+            }
+        }, 1000);
+
+        function goBack() {
+            window.history.go(-1);
+        }</script>
+</body>
+</html>

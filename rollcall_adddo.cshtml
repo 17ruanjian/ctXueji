@@ -4,6 +4,7 @@
     {
         Response.Redirect("~/login.cshtml");
     }
+
     if (IsPost)
     {
         var students_id = Request.Form["students_id"];
@@ -13,13 +14,56 @@
         var classes_id = Request.Form["classes_id"];
         var time = Convert.ToString(DateTime.Now);
         var b = temparry1.Count();
-        for(int i = 0; i < b; i++)
+        int h = DateTime.Now.Hour;//小时部分
+
+        int m = DateTime.Now.Minute;//分钟部分7-8,9-10,12-13,14-15,16-17
+        if (h == 7 || h == 8 || h == 9 || h == 10 || h == 12 || h == 13 || h == 14 || h == 15 || h == 16 || h == 17)
         {
-            int t = i + 1;
-            var statu = Request.Form["statu_"+t];
-            var addRollcall = "insert into rollcall (students_id,courses_id,classes_id,time,state,user_power,user_name) values(@0,@1,@2,@3,@4,@5,@6)";
-            db.Execute(addRollcall, temparry1[i], courses_id, classes_id, time, statu,Convert.ToInt16(Session["authority"]),Convert.ToString(Session["name"]));
+            if (h == 7 || h == 9 || h == 12 || h == 14 || h == 16)
+            {
+                if (m >= 55)
+                {
+
+                    for (int i = 0; i < b; i++)
+                    {
+                        int t = i + 1;
+                        var statu = Request.Form["statu_" + t];
+                        var addRollcall = "insert into rollcall (students_id,courses_id,classes_id,time,state,user_power,user_name) values(@0,@1,@2,@3,@4,@5,@6)";
+                        db.Execute(addRollcall, temparry1[i], courses_id, classes_id, time, statu, Convert.ToInt16(Session["authority"]), Convert.ToString(Session["name"]));
+                    }
+                    Response.Redirect("~/jump.cshtml");
+                }
+                else
+                {
+                    Response.Redirect("~/jumper");
+                }
+            }
+            else if (h == 8 || h == 10 || h == 13 || h == 15 || h == 17)
+            {
+                if (m >= 0 && m <= 15)
+                {
+                    for (int i = 0; i < b; i++)
+                    {
+                        int t = i + 1;
+                        var statu = Request.Form["statu_" + t];
+                        var addRollcall = "insert into rollcall (students_id,courses_id,classes_id,time,state,user_power,user_name) values(@0,@1,@2,@3,@4,@5,@6)";
+                        db.Execute(addRollcall, temparry1[i], courses_id, classes_id, time, statu, Convert.ToInt16(Session["authority"]), Convert.ToString(Session["name"]));
+                    }
+                    Response.Redirect("~/jump.cshtml");
+                }
+                else
+                {
+                    Response.Redirect("~/jumper");
+                }
+            }
+            else
+            {
+                Response.Redirect("~/jumper");
+            }
         }
-        Response.Redirect("~/jump.cshtml");
+        else
+        {
+            Response.Redirect("~/jumper");
+        }
     }
 }

@@ -1,0 +1,74 @@
+﻿
+@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] != null)
+    {
+        Response.Redirect("~/rollcall.cshtml");
+    }
+    var a = Request.QueryString["username"];
+}
+<style>
+    h1 {
+        font-weight: 900;
+    }
+
+    .divForm {
+        position: absolute; /*绝对定位*/
+        width: 400px;
+        height: 200px;
+        text-align: center; /*(让div中的内容居中)*/
+        left: 50%;
+        margin-left: -200px;
+    }
+
+    .form-group {
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+    }
+
+    .title_left {
+        width: 100px;
+        font-size: 18px;
+    }
+
+    .form-group input {
+        width: 100%;
+    }
+
+    .btn btn-primary {
+        left: 0%;
+    }
+</style>
+    <div class="divForm">
+        <h1>-欢迎来到学籍管理系统-</h1><br /><br />
+        <form action="~/v.cshtml" method="post">
+            <div class="form-group">
+                <label class="title_left" for="name">用户名:</label>
+                <select name="username" id="username">
+                    <option value="kongdecui">kongdecui</option>
+                    <option value="zhaodebing">zhaodebing</option>
+                    <option value="liuliang">liuliang</option>
+                    <option value="huzhendong">huzhendong</option>
+                    <option value="limingjie">limingjie</option>
+                    <option value="sunhaiyan">sunhaiyan</option>
+                    <option value="zhuangdexin">zhuangdexin</option>
+                    <option value="lixiaohang">lixiaohang</option>
+                    <option value="zhudi">zhudi</option>
+                    <option value="qiaoyina">qiaoyina</option>
+                    <option value="gaoqian">gaoqian</option>
+                    <option value="chenpeng">chenpeng</option>
+                    <option value="jixielaoshi">jixielaoshi</option>
+                    <option value="renshaobo">renshaobo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="title_left" for="number">密码:</label>
+                <input type="password" class="form-control" name="password" id="password" value="123456789">
+            </div>
+            <input class="btn btn-primary" type="submit" value="登录">
+        </form>
+
+    </div>
+
+

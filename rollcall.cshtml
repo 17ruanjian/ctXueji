@@ -9,6 +9,8 @@
 <script>
     $(document).ready(function () {
         $('#table_id').DataTable();
+        "paging": false,
+        "ordering": false
     });
 </script>
 @if (Convert.ToInt16(Session["authority"]) == 2)
@@ -95,11 +97,11 @@
                             }
                             else if (b > 75)
                             {
-                                <td class="centent"><span class="btn btn-danger">@b %</span></td>
+                                <td class="centent"><span class="btn btn-warning">@b %</span></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-warning">@b %</span></td>
+                                <td class="centen"><span class="btn btn-danger">@b %</span></td>
                             }
                         }
                     }
@@ -194,11 +196,11 @@ else
                             }
                             else if (b > 75)
                             {
-                                <td class="centent"><span class="btn btn-danger">@b %</span></td>
+                                <td class="centent"><span class="btn btn-warning">@b %</span></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-warning">@b %</span></td>
+                                <td class="centen"><span class="btn btn-danger">@b %</span></td>
                             }
                         }
                     }

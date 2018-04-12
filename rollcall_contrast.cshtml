@@ -7,8 +7,8 @@
     }
     var time = Request.QueryString["time"];
     var time_sc = Request.QueryString["time_sc"];
-    var list = "select *from rollcall where time = '" + time + "'";
-    var lists = "select *from rollcall where time = '" + time_sc + "'";
+    var list = "select *from rollcall where time_stamp = '" + time + "'";
+    var lists = "select *from rollcall where time_stamp = '" + time_sc + "'";
     var teacher = db.QuerySingle(lists);
     var t = teacher.user_name;
     var c = teacher.classes_id;
@@ -30,7 +30,7 @@
         {
             var sid = row.students_id;
             var studentsList = "select *from students where id = " + sid;
-            var list_sc = "select *from rollcall where time = '" + time_sc + "' and students_id = " + sid;
+            var list_sc = "select *from rollcall where time_stamp = '" + time_sc + "' and students_id = " + sid;
             var row1 = db.QuerySingle(studentsList);
             var row2 = db.QuerySingle(list_sc);
             <tr class="t">

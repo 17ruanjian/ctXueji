@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var list = "select * from teachers where status = 1";
+    if (IsPost)
+    {
+        var name = Request.Form["radio"];
+        var time = DateTime.Now.AddMinutes(30);
+        var update = "update teachers set exempt = '" + time + "'where teachers_name = '" + name + "'";
+        db.Execute(update);
+        var add = "insert into log (teachers_name,time_stamp) values(@0,@1)";
+        db.Execute(add, name, time);
+        Response.Redirect("rollcall_add");
+    }
+}
+<link rel="stylesheet" type="text/css" href="content/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="content/jquery-ui.theme.css">
+<script src="scripts/jquery-3.3.1.min.js"></script>
+<script src="scripts/jquery-ui.js"></script>
+
+<script>
+    $(function () {
+        $("#radio").buttonset();
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2><font size="4">赦免</font></h2>
+            <div class="alert alert-info">
+                <form method="post">
+                    <div id="radio">
+                        @foreach (var row in db.Query(list))
+                        {
+
+                            <input type="radio" name="radio" id="radio_@row.id" value=@row.teachers_name><label for="radio_@row.id">@row.teachers_name</label>
+
+                        }
+                    </div>
+                    <button class="btn btn-primary" type="submit">提交</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

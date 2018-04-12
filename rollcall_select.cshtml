@@ -7,7 +7,7 @@
     var time = Request.QueryString["time"];
     var class_id = Request.QueryString["cid"];
     var db = Database.Open("ctXueji");
-    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall where classes_id=" + class_id + " and (user_power=1 or user_power=3) group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
+    var list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall where classes_id=" + class_id + " and (user_power=1 or user_power=3) group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp desc";//user_power="+Convert.ToInt16(Session["authority"])+"
     var temp = db.QuerySingle(list);
 }
 
@@ -49,7 +49,7 @@
                 }
                 <td class="center">@row1.classes_year @row2.majors_name</td>
                 <td class="center">@row3.courses_name</td>
-                <td class="center"><a href="~/rollcall_contrast.cshtml?time=@time&time_sc=@row.time">@row.time</a></td>
+                <td class="center"><a href="~/rollcall_contrast.cshtml?time=@time&time_sc=@row.time_stamp">@row.time_stamp</a></td>
                 <td class="center">@row.user_name</td>
             </tr>
         }

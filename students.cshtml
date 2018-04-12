@@ -26,7 +26,7 @@
 </script>
 @if (Session["name"] != null)
 {
-    if (Convert.ToInt16(Session["authority"]) == 2)
+    if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
     {
         if (classes_id == null)
         {
@@ -63,7 +63,7 @@
                 {
                     <tr class="t">
                         <td class="center">@row.students_number</td>
-                        <td class="center">@row.students_name</td>
+                        <td class="center"><a href="~/students_edit.cshtml?id=@row.id&cid=@row.classes_id">@row.students_name</a></td>
                         <td class="center">@row.students_sex</td>
                         <td class="center">@row.students_age</td>
                         <td class="center">@row.classes_year@row.majors_name</td>

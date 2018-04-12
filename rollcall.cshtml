@@ -15,7 +15,7 @@
 </script>
 @if (Convert.ToInt16(Session["authority"]) == 2)
 {
-    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
+    var list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp DESC";//user_power="+Convert.ToInt16(Session["authority"])+"
 
     <font id="nowTime" color=grey size="5"></font>
 
@@ -58,13 +58,13 @@
                     <td class="center">@row1.classes_year @row2.majors_name</td>
                     <td class="center">@row3.courses_name</td>
                     @{
-                        var time = row.time;
+                        var time = row.time_stamp;
                         var classes_id = row.classes_id;
                         var courses_id = row.courses_id;
                         float c = 0;
                         float z = 0;
                         float b = 0;
-                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time='" + time + "'";
+                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time + "'";
                         foreach (var row4 in db.Query(cqlist))
                         {
                             z++;
@@ -80,12 +80,12 @@
                         }
                         if (z == 0)
                         {
-                            <td class="centent"><span class="btn btn-success">100 %</span></td>
+                            <td class="centent"><span class="btn btn-success">100 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
 
                         }
                         else if (z == c)
                         {
-                            <td class="centen"><span class="btn btn-warning">50 %</span></td>
+                            <td class="centen"><span class="btn btn-warning">50 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                         }
                         else
                         {
@@ -93,19 +93,19 @@
                             b = b * 100;
                             if (b > 90)
                             {
-                                <td class="centent"><span class="btn btn-success">@b %</span></td>
+                                <td class="centent"><span class="btn btn-success">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else if (b > 75)
                             {
-                                <td class="centent"><span class="btn btn-warning">@b %</span></td>
+                                <td class="centent"><span class="btn btn-danger">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-danger">@b %</span></td>
+                                <td class="centen"><span class="btn btn-warning">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                         }
                     }
-                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time">@row.time</a></td>
+                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time_stamp">@row.time_stamp</a></td>
                     <td class="center">@row.user_name</td>
                 </tr>
             }
@@ -114,7 +114,7 @@
 }
 else
 {
-    var list = "select time,classes_id,courses_id,user_power,user_name from rollcall where user_name='" + Convert.ToString(Session["name"]) + "' group by time,classes_id,courses_id,user_power,user_name order by time desc";//user_power="+Convert.ToInt16(Session["authority"])+"
+    var list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall where user_name='" + Convert.ToString(Session["name"]) + "' group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp desc";//user_power="+Convert.ToInt16(Session["authority"])+"
 
     <font id="nowTime" color=grey size="5"></font>
 
@@ -157,13 +157,13 @@ else
                     <td class="center">@row1.classes_year @row2.majors_name</td>
                     <td class="center">@row3.courses_name</td>
                     @{
-                        var time = row.time;
+                        var time = row.time_stamp;
                         var classes_id = row.classes_id;
                         var courses_id = row.courses_id;
                         float c = 0;
                         float z = 0;
                         float b = 0;
-                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time='" + time + "'";
+                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time + "'";
                         foreach (var row4 in db.Query(cqlist))
                         {
                             z++;
@@ -179,12 +179,12 @@ else
                         }
                         if (z == 0)
                         {
-                            <td class="centent"><span class="btn btn-success">100 %</span></td>
+                            <td class="centent"><span class="btn btn-success">100 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
 
                         }
                         else if (z == c)
                         {
-                            <td class="centen"><span class="btn btn-warning">50 %</span></td>
+                            <td class="centen"><span class="btn btn-warning">50 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                         }
                         else
                         {
@@ -192,19 +192,19 @@ else
                             b = b * 100;
                             if (b > 90)
                             {
-                                <td class="centent"><span class="btn btn-success">@b %</span></td>
+                                <td class="centent"><span class="btn btn-success">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else if (b > 75)
                             {
-                                <td class="centent"><span class="btn btn-warning">@b %</span></td>
+                                <td class="centent"><span class="btn btn-danger">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-danger">@b %</span></td>
+                                <td class="centen"><span class="btn btn-warning">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                         }
                     }
-                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time">@row.time</a></td>
+                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time_stamp">@row.time_stamp</a></td>
                     <td class="center">@row.user_name</td>
                 </tr>
             }

@@ -17,10 +17,10 @@
         return f;
     }
 
-    public static bool Times(string time)
+    public static bool Times(string time_stamp)
     {
         var t = false;
-        var sqltime = Convert.ToDateTime(time);
+        var sqltime = Convert.ToDateTime(time_stamp);
         var nowtime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
         if (nowtime > sqltime)
         {
@@ -99,5 +99,59 @@
         }
         return w;
     }
+
+public static Dictionary<int, int> StringToDictionary(string value)
+    {
+        Dictionary<int, int> str = new Dictionary<int, int>();
+        string[] temp = value.Split('|');
+        foreach (var i in temp)
+        {
+            string[] temparry = i.Split('=');
+            int x = 1;
+            int getKey = 0;
+            int getValue = 0;
+            foreach (var y in temparry)
+            {
+                if (x == 1)
+                {
+                    getKey = Convert.ToInt16(y);
+                }
+                else
+                {
+                    getValue = Convert.ToInt16(y);
+                }
+                x++;
+            }
+            str.Add(getKey, getValue);
+        }
+        return str;
+    }
+
+    public static string DictionaryToString(Dictionary<int, int> value)
+    {
+        string str = "";
+        int temp = value.Count;
+        if (temp == 0)
+        {
+            return str;
+        }
+        int p = 1;
+        foreach (var i in value)
+        {
+            if (p == 1)
+            {
+                str = str + i.Key + "=" + i.Value;
+            }
+            else
+            {
+                str = str + "|" + i.Key + "=" + i.Value;
+            }
+            p++;
+        }
+        return str;
+    }
+    	
+
 }
 @var db = Database.Open("ctXueji");
+@int Authority=Convert.ToInt16(Session["authority"]);

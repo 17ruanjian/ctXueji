@@ -1,2 +1,103 @@
-<!-- 这里应该是个重点区域的啊。。。 -->
+﻿<!-- 这里应该是个重点区域的啊。。。 -->
+
+@functions{
+    public static bool ExemptTime(string exempt)
+    {
+        var t = DateTime.Now;
+        var t30 = Convert.ToDateTime(exempt);
+        var f = false;
+        if (t > t30)
+        {
+            return f;
+        }
+        else if (t <= t30)
+        {
+            f = true;
+        }
+        return f;
+    }
+
+    public static bool Times(string time)
+    {
+        var t = false;
+        var sqltime = Convert.ToDateTime(time);
+        var nowtime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
+        if (nowtime > sqltime)
+        {
+            var subtime = nowtime - sqltime;
+            var subtimeh = subtime.Hours;
+            var subtimem = subtime.Minutes;
+            int min = subtimeh * 60 + subtimem;
+            if (min <= 90)
+            {
+                t = true;
+            }
+        }
+        return t;
+    }
+
+    public static string LearnTime()
+    {
+        var t = "";
+        var nowtime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
+        var sone = "09:30:00";
+        var sonem = "10:00:00";
+        var stwo = "11:30:00";
+        var stwom = "13:00:00";
+        var xone = "14:30:00";
+        var xonem = "15:00:00";
+        var xtwo = "16:30:00";
+        var xtwos = "17:00:00";
+        if(nowtime >= Convert.ToDateTime(sone) && nowtime < Convert.ToDateTime(sonem))
+        {
+            t = "课间休息。。。。。。";
+        }
+        if (nowtime >= Convert.ToDateTime(stwo) && nowtime < Convert.ToDateTime(stwom))
+        {
+            t = "课间休息。。。。。。";
+        }
+        if (nowtime >= Convert.ToDateTime(xone) && nowtime < Convert.ToDateTime(xonem))
+        {
+            t = "课间休息。。。。。。";
+        }
+        if (nowtime >= Convert.ToDateTime(xtwo) && nowtime < Convert.ToDateTime(xtwos))
+        {
+            t = "课间休息。。。。。。";
+        }
+        return t;
+    }
+
+    public static int WeekChange(string week)
+    {
+        int w = 0;
+        switch (week)
+        {
+            case "一":
+                w = 1;
+                break;
+            case "二":
+                w = 2;
+                break;
+            case "三":
+                w = 3;
+                break;
+            case "四":
+                w = 4;
+                break;
+            case "五":
+                w = 5;
+                break;
+            case "六":
+                w = 6;
+                break;
+            case "日":
+                w = 7;
+                break;
+            default:
+                w = 0;
+                break;
+        }
+        return w;
+    }
+}
 @var db = Database.Open("ctXueji");

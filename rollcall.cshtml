@@ -5,20 +5,18 @@
         Response.Redirect("~/login.cshtml");
     }
     var db = Database.Open("ctXueji");
+    var list="";
 }
 <script>
     $(document).ready(function () {
-        $('#table_id').DataTable();
-        "paging": false,
-        "ordering": false
+        $('#table_id').DataTable(
+            "paging": false,
+            "ordering": false
+        );
+        
     });
 </script>
-@if (Convert.ToInt16(Session["authority"]) == 2)
-{
-    var list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp DESC";//user_power="+Convert.ToInt16(Session["authority"])+"
-
     <font id="nowTime" color=grey size="5"></font>
-
     <script>
         function showTime() {
             nowtime = new Date();
@@ -29,7 +27,6 @@
         }
         setInterval("showTime()", 1000);
     </script>
-
     <table id="table_id" class="display">
         <thead>
             <tr>
@@ -41,105 +38,14 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var row in db.Query(list))
-            {
-                <tr>
-                    @{
-                        var cid = row.classes_id;
-                        var coid = row.courses_id;
-                        var classList = "select *from classes where id=" + cid;
-                        var row1 = db.QuerySingle(classList);
-                        var mid = row1.majors_id;
-                        var majorsList = "select *from majors where id=" + mid;
-                        var row2 = db.QuerySingle(majorsList);
-                        var coursesList = "select *from courses where id=" + coid;
-                        var row3 = db.QuerySingle(coursesList);
-                    }
-                    <td class="center">@row1.classes_year @row2.majors_name</td>
-                    <td class="center">@row3.courses_name</td>
-                    @{
-                        var time = row.time_stamp;
-                        var classes_id = row.classes_id;
-                        var courses_id = row.courses_id;
-                        float c = 0;
-                        float z = 0;
-                        float b = 0;
-                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time + "'";
-                        foreach (var row4 in db.Query(cqlist))
-                        {
-                            z++;
-                            if (row4.state == 1 || row4.state == 4)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                c++;
-                            }
-
-                        }
-                        if (z == 0)
-                        {
-                            <td class="centent"><span class="btn btn-success">100 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-
-                        }
-                        else if (z == c)
-                        {
-                            <td class="centen"><span class="btn btn-warning">50 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-                        }
-                        else
-                        {
-                            b = ((z - c) / z);
-                            b = b * 100;
-                            if (b > 90)
-                            {
-                                <td class="centent"><span class="btn btn-success">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-                            }
-                            else if (b > 75)
-                            {
-                                <td class="centent"><span class="btn btn-danger">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-                            }
-                            else
-                            {
-                                <td class="centen"><span class="btn btn-warning">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-                            }
-                        }
-                    }
-                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time_stamp">@row.time_stamp</a></td>
-                    <td class="center">@row.user_name</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+@if (Convert.ToInt16(Session["authority"]) == 2)
+{//user_power="+Convert.ToInt16(Session["authority"])+"
+    list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp DESC";
 }
 else
 {
-    var list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall where user_name='" + Convert.ToString(Session["name"]) + "' group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp desc";//user_power="+Convert.ToInt16(Session["authority"])+"
-
-    <font id="nowTime" color=grey size="5"></font>
-
-    <script>
-        function showTime() {
-            nowtime = new Date();
-            year = nowtime.getFullYear();
-            month = nowtime.getMonth() + 1;
-            date = nowtime.getDate();
-            document.getElementById("nowTime").innerText = year + "年" + month + "月" + date + "" + nowtime.toLocaleTimeString();
-        }
-        setInterval("showTime()", 1000);
-    </script>
-
-    <table id="table_id" class="display">
-        <thead>
-            <tr>
-                <th>班级</th>
-                <th>课程</th>
-                <th>出勤率</th>
-                <th>时间</th>
-                <th>操作人</th>
-            </tr>
-        </thead>
-        <tbody>
+    list = "select time_stamp,classes_id,courses_id,user_power,user_name from rollcall where user_name='" + Convert.ToString(Session["name"]) + "' group by time_stamp,classes_id,courses_id,user_power,user_name order by time_stamp desc";
+}
             @foreach (var row in db.Query(list))
             {
                 <tr>
@@ -157,13 +63,13 @@ else
                     <td class="center">@row1.classes_year @row2.majors_name</td>
                     <td class="center">@row3.courses_name</td>
                     @{
-                        var time = row.time_stamp;
+                        var time_stamp = row.time_stamp;
                         var classes_id = row.classes_id;
                         var courses_id = row.courses_id;
                         float c = 0;
                         float z = 0;
                         float b = 0;
-                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time + "'";
+                        var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time_stamp + "'";
                         foreach (var row4 in db.Query(cqlist))
                         {
                             z++;
@@ -190,24 +96,24 @@ else
                         {
                             b = ((z - c) / z);
                             b = b * 100;
+                            string resultPercent=string.Format("{0:f2}", b);
                             if (b > 90)
                             {
-                                <td class="centent"><span class="btn btn-success">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centent"><span class="btn btn-success">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else if (b > 75)
                             {
-                                <td class="centent"><span class="btn btn-danger">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centent"><span class="btn btn-warning">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-warning">@b %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centen"><span class="btn btn-danger">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
                             }
                         }
                     }
-                    <td class="center"><a href="~/rollcall_history.cshtml?time=@row.time_stamp">@row.time_stamp</a></td>
+                    <td class="center"><a href="~/rollcall_history.cshtml?time_stamp=@row.time_stamp">@row.time_stamp</a></td>
                     <td class="center">@row.user_name</td>
                 </tr>
             }
         </tbody>
     </table>
-}

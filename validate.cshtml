@@ -1,26 +1,12 @@
-﻿@using System;
-@using System.Data;
-@using System.Data.SqlClient;
-@using System.Text;
-@using System.Security.Cryptography;
-
-
-@{
+﻿@{
     var db = Database.Open("ctXueji");
-    string MD5Encrypt16(string password)
-    {
-        var md5 = new MD5CryptoServiceProvider();
-        string t2 = BitConverter.ToString(md5.ComputeHash(Encoding.Default.GetBytes(password)), 4, 8);
-        t2 = t2.Replace("-", "");
-        return t2;
-    }
     if (IsPost)
     {
-        var name = Request.Form["username"];
-        var number = Request.Form["password"];
-        var t = MD5Encrypt16(number);
+        var input_name = Request.Form["username"];
+        var input_Password = Request.Form["password"];
+        var encryptPassword = Functions.MD5Encrypt16(input_Password);
         var select = "select *from users where username = @0 and password = @1";
-        var row = db.QuerySingle(select, name, t);
+        var row = db.QuerySingle(select, input_name, encryptPassword);
         if (row != null)
         {
             Session["name"] = row.name;
@@ -30,7 +16,7 @@
         }
         else
         {
-            Response.Redirect("~/login.cshtml?username=" + name);
+            Response.Redirect("~/login.cshtml?username=" + input_name);
         }
 
     }

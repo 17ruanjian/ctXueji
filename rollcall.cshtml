@@ -24,12 +24,12 @@ else
                 });
         });
     </script>
-    <table id="table_id" class="display">
+    <table id="table_id" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>班级</th>
                 <th>课程</th>
-                <th>出勤率</th>
+                <th>出勤率(总数-出勤=缺勤)</th>
                 <th>时间</th>
                 <th>操作人</th>
             </tr>
@@ -42,63 +42,63 @@ else
                         var cid = row.classes_id;
                         var coid = row.courses_id;
                         var classList = "select *from classes where id=" + cid;
-                        var row1 = db.QuerySingle(classList);
-                        var mid = row1.majors_id;
+                        var classListRow = db.QuerySingle(classList);
+                        var mid = classListRow.majors_id;
                         var majorsList = "select *from majors where id=" + mid;
-                        var row2 = db.QuerySingle(majorsList);
+                        var majorsListRow = db.QuerySingle(majorsList);
                         var coursesList = "select *from courses where id=" + coid;
-                        var row3 = db.QuerySingle(coursesList);
+                        var coursesListRow = db.QuerySingle(coursesList);
                     }
-                    <td class="center">@row1.classes_year @row2.majors_name</td>
-                    <td class="center">@row3.courses_name</td>
+                    <td class="center">@classListRow.classes_year @majorsListRow.majors_name</td>
+                    <td class="center">@coursesListRow.courses_name</td>
                     @{
                         var time = row.time_stamp;
                         var classes_id = row.classes_id;
                         var courses_id = row.courses_id;
-                        float c = 0;
-                        float z = 0;
-                        float b = 0;
+                        // absents缺勤 presents出勤 totals总数 attendanceRate出勤率
+                        float absents = 0;
+                        float totals = 0;
+                        float attendanceRate = 0;
+                        float presents=0;
                         var cqlist = "select *from rollcall where classes_id=" + classes_id + " and courses_id = " + courses_id + " and time_stamp='" + time + "'";
                         var dic = row.sid_state;//合并后查询
-
                         foreach (var row4 in Functions.StringToDictionary(dic))
                         {
-                            z++;
+                            totals++;
                             if (row4.Value == 1 || row4.Value == 4)
                             {
                                 continue;
                             }
                             else
                             {
-                                c++;
+                                absents++;
                             }
-
                         }
-                        if (z == 0)
+                        if (totals == 0)
                         {
-                            <td class="centent"><span class="btn btn-success">100 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
-
+                            <td class="centent"><span class="btn btn-success">100 %</span>&nbsp;<font>@totals-@absents=@presents</font></td>
                         }
-                        else if (z == c)
+                        else if (totals == absents)
                         {
-                            <td class="centen"><span class="btn btn-warning">50 %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                            <td class="centen"><span class="btn btn-warning">50 %</span>&nbsp;<font>@totals-@absents=@presents</font></td>
                         }
                         else
                         {
-                            b = ((z - c) / z);
-                            b = b * 100;
-                            string resultPercent=string.Format("{0:f2}", b);
-                            if (b > 90)
+                            presents=totals - absents;
+                            attendanceRate = presents / totals;
+                            attendanceRate = attendanceRate * 100;
+                            string attendanceStr=string.Format("{0:f2}", attendanceRate);
+                            if (attendanceRate > 90)
                             {
-                                <td class="centent"><span class="btn btn-success">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centent"><span class="btn btn-success">@attendanceStr %</span>&nbsp;<font>@totals-@absents=@presents</font></td>
                             }
-                            else if (b > 75)
+                            else if (attendanceRate > 75)
                             {
-                                <td class="centent"><span class="btn btn-warning">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centent"><span class="btn btn-warning">@attendanceStr %</span>&nbsp;<font>@totals-@absents=@presents</font></td>
                             }
                             else
                             {
-                                <td class="centen"><span class="btn btn-danger">@resultPercent %</span>&nbsp;<font>总:@z</font>&nbsp;<font>未:@c</font></td>
+                                <td class="centen"><span class="btn btn-danger">@attendanceStr %</span>&nbsp;<font>@totals-@absents=@presents</font></td>
                             }
                         }
                     }

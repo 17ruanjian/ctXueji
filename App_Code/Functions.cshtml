@@ -1,6 +1,15 @@
 ﻿<!-- 这里应该是个重点区域的啊。。。 -->
 
+@using System.Text;
+@using System.Security.Cryptography;
 @functions{
+    public static string MD5Encrypt16(string tobeEncrypt)
+    {
+        var md5 = new MD5CryptoServiceProvider();
+        string resultStr = BitConverter.ToString(md5.ComputeHash(Encoding.Default.GetBytes(tobeEncrypt)), 4, 8);
+        resultStr = resultStr.Replace("-", "");
+        return resultStr;
+    }
     public static bool ExemptTime(string exempt)
     {
         var t = DateTime.Now;

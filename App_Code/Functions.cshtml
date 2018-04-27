@@ -3,6 +3,57 @@
 @using System.Text;
 @using System.Security.Cryptography;
 @functions{
+    public static string Classesing(int t,string time_stamp)
+    {
+        string temp = "";
+        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+        string week = weekdays[Convert.ToInt32(DateTime.Now.DayOfWeek)];
+        if(t == Convert.ToInt16(week))
+        {
+            var dbTime = Convert.ToDateTime(time_stamp);
+            var nowTime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
+            if (nowTime > dbTime)
+            {
+                var subTime = nowTime - dbTime;
+                var subTimeh = subTime.Hours;
+                var subTimem = subTime.Minutes;
+                int min = subTimeh * 60 + subTimem;
+                if (min <= 90)
+                {
+                    temp = "ing";
+                }
+            }
+        }
+        return temp;
+    }
+    public static string LessonsOrder(int t)
+    {
+        string temp = "";
+
+        switch (t)
+        {
+            case 1:
+                temp = "First<br>(8:00-9:30)";
+                break;
+            case 2:
+                temp = "Second<br>(10:00-11:30)";
+                break;
+            case 3:
+                temp = "Third<br>(13:00-14:30)";
+                break;
+            case 4:
+                temp = "Fourth<br>(15:00-16:30)";
+                break;
+            case 5:
+                temp = "Fifth<br>(17:00-18:30)";
+                break;
+            default:
+                temp = "";
+                break;
+        }
+        return temp;
+    }
+
     public static string MD5Encrypt16(string tobeEncrypt)
     {
         var md5 = new MD5CryptoServiceProvider();
@@ -109,7 +160,7 @@
         return w;
     }
 
-public static Dictionary<int, int> StringToDictionary(string value)
+    public static Dictionary<int, int> StringToDictionary(string value)
     {
         Dictionary<int, int> str = new Dictionary<int, int>();
         string[] temp = value.Split('|');
@@ -159,7 +210,7 @@ public static Dictionary<int, int> StringToDictionary(string value)
         }
         return str;
     }
-    	
+
 
 }
 @var db = Database.Open("ctXueji");

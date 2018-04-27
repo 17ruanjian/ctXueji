@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+}
+<style>
+    .t {
+        height: 80px;
+        background-color: #dedef8;
+        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+        text-align: center;
+        line-height: 80px;
+    }
+
+    .c {
+        background-color: #dedef8;
+        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+        text-align: center;
+    }
+    .ing{
+        background-color:#84ff7a;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 t">课节/星期</div>
+        <div class="col-md-2 t">星期一</div>
+        <div class="col-md-2 t">星期二</div>
+        <div class="col-md-2 t">星期三</div>
+        <div class="col-md-2 t">星期四</div>
+        <div class="col-md-2 t">星期五</div>
+    </div>
+    @for (int n = 1; n <= 5; n++)
+    {
+        <div class="row">
+            <div class="col-md-2 c">@Functions.LessonsOrder(n)</div>
+            @{
+                for (int i = 1; i <= 5; i++)
+                {
+                    <div class="col-md-2 c ">
+                        @{
+                            var week = "select classroom_name,teachers_name,courses_name from View_kebiao_one where weekDays = " + i + "and lessonsOrder=" + n;
+                        }
+                        @foreach (var cellRow in db.Query(week))
+                        {
+                            <span>@cellRow.classroom_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br />
+                        }
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>
+    @*<div class="row">
+        <div class="col-md-2 c">First(8:00-9:30)</div>
+    </div>*@
+    @*<div class="row">
+            <div class="col-md-2 c">Second<br />(10:00-11:30)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 c">Third<br />(13:00-14:30)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 c">Fourth<br />(15:00-16:30)</div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 c">Fifth<br />(17:00-18:30)</div>
+        </div>*@
+
+
+
+@*<p class="popover-options">
+        <a href="#" type="button" class="" title="<h2>Title</h2>"
+           data-container="body" data-toggle="popover" data-content="
+                                                                         <h4>Popover 中的一些内容 —— options 方法</h4>">
+                Popover
+            </a>
+    </p>
+    <script>
+            $(function () { $(".popover-options a").popover({html : true });});
+    </script>*@

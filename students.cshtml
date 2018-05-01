@@ -83,7 +83,8 @@
             {
                 if (classea_id == null)
                 {
-                    list += " inner join teachers on classes.teachers_id = teachers.id where teachers.teachers_name = " + "'" + Session["name"] + "'";
+                    // list += " inner join teachers on classes.teachers_id = teachers.id where teachers.teachers_name = " + "'" + Session["name"] + "'";
+                    list += " where teachers_name = " + "'" + Session["name"] + "'";
                 }
                 foreach (var row in db.Query(list))
                 {
@@ -117,7 +118,8 @@
 
                 foreach (var c in jsskbj)
                 {
-                    list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id where classes_id = " + c;
+                    // list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id where classes_id = " + c;
+                    list = "select * from View_list_students where classes_id = " + c;
                     foreach (var row in db.Query(list))
                     {
                         <tr>

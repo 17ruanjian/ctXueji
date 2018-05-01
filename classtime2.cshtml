@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var teachers_id = Convert.ToInt16(Request.QueryString["teachers_id"]);
+    var week="";
+}
+<style>
+    .t {
+        height: 80px;
+        background-color: #dedef8;
+        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+        text-align: center;
+        line-height: 80px;
+    }
+
+    .c {
+        background-color: #dedef8;
+        box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+        text-align: center;
+    }
+
+    .ing {
+        background-color: #84ff7a;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2 t">课节/星期</div>
+        <div class="col-md-2 t">星期一</div>
+        <div class="col-md-2 t">星期二</div>
+        <div class="col-md-2 t">星期三</div>
+        <div class="col-md-2 t">星期四</div>
+        <div class="col-md-2 t">星期五</div>
+    </div>
+    @for (int n = 1; n <= 5; n++)
+    {
+        <div class="row">
+            <div class="col-md-2 c">@Functions.LessonsOrder(n)</div>
+            @{
+                for (int i = 1; i <= 5; i++)
+                {
+                    <div class="col-md-2 c">
+                        @{
+                            week = "select * from View_coursesArranging_one where weekDays = " + i + "and lessonsOrder=" + n + "and teachers_id=" + teachers_id;
+                        }
+                        @foreach (var cellRow in db.Query(week))
+                        {
+                            <span><h1>@i - @n</h1>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    }
+</div>

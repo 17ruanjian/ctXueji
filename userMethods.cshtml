@@ -1,0 +1,8 @@
+﻿@{
+    
+    var input_Name = Request["username"];
+    var input_Password = Request["password"];
+    var userType=Request["userType"];
+    Response.Write(Functions.userMethods_login(input_Name, input_Password, userType));
+    
+}

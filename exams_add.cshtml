@@ -15,19 +15,49 @@
         var hours = Request.Form["hours"];
         var day = Request.Form["day"];
         var min = Request.Form["min"];
-        var t = date + hours + min;
+        var t = date +"-"+ hours+"时" + min+"分";
         var add = "insert into exams (exams_name,exams_date,exams_type) values(@0,@1,@2)";
         db.Execute(add, name, t, type);
         var listexams = "select id from exams where exams_name = @0 and exams_type = " + type;
         var exid = db.QuerySingle(listexams, name);
         var liststudents = "select id from students where classes_id = " + cid;
         var valueexid = exid.id;
+
+
+        var Studentsvalue = "select * from coursesArranging where courses_id=" + coid;
+        int coursesArranging__id = 0;
+        foreach (var c in db.Query(Studentsvalue))
+        {
+            int x = 0;
+            string p = c.classes_id;
+            string[] temp = p.Split(',');
+            foreach (var a in temp)
+            {
+
+                if (a == cid)
+                {
+                    x = 1;
+                    break;
+                }
+            }
+            if (x == 1)
+            {
+                coursesArranging__id = c.id;
+                break;
+            }
+        }
+
+        Dictionary<int, int> student_value = new Dictionary<int, int>();
+
+
         foreach (var row in db.Query(liststudents))
         {
             var sid = row.id;
-            var addscores = "insert into scores (exams_id,scores_value,courses_id,students_id,classes_id) values(@0,'',@1,@2,@3)";
-            db.Execute(addscores, valueexid, coid, sid, cid);
+            student_value.Add(sid,0);
         }
+
+        var addscores = "insert into scores (exams_id,students_value,coursesArranging_id) values (@0,@1,@2)";
+        db.Execute(addscores, valueexid, Functions.DictionaryToString(student_value), coursesArranging__id);
         Response.Redirect("~/examsall?cid=" + cid + "&coid=" + coid);
     }
 }

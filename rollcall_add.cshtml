@@ -24,7 +24,7 @@
         year = nowtime.getFullYear();
         month = nowtime.getMonth() + 1;
         date = nowtime.getDate();
-        document.getElementById("nowTime").innerText = year + "年" + month + "月" + date + "" + nowtime.toLocaleTimeString();
+        document.getElementById("nowTime").innerText = year + "年" + month + "月" + date + "日 " + nowtime.toLocaleTimeString();
     }
 
     setInterval("showTime()", 1000);
@@ -353,7 +353,7 @@ else
                 setInterval("showTime()", 1000);
             </script>
             <input type="hidden" name="courses_id" id="courses_id" value=@courses />
-            <a class="btn btn-primary" href="~/count.cshtml?cid=@classes&coid=@courses">统计</a>
+           <!-- <a class="btn btn-primary" href="~/count.cshtml?cid=@classes&coid=@courses">统计</a> -->
             <span id="hide"><button class="btn" type="submit" id="hide">提交</button></span>
             <div id="top"></div>
         </form>

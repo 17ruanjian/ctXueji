@@ -3,6 +3,157 @@
 @using System.Text;
 @using System.Security.Cryptography;
 @functions{
+
+    public static string userMethods_login(string input_Name, string input_Password, string userType)
+    {
+        if(userType=="1"){
+            //input_Password=MD5Encrypt16(input_Password);
+            var db = Database.Open("ctXueji");
+            var select = "select *from users where username = @0 and password = @1";
+            var row = db.QuerySingle(select, input_Name, input_Password);
+            if (row != null){
+                    Session["name"] = row.name;
+                    Session["username"] = row.username;
+                    Session["authority"] = row.authority;
+                    return "TOK";
+                }else
+                {
+                    return "tfail";
+                }
+        }else if(userType=="2"){
+            //input_Password=MD5Encrypt16(input_Password);
+            var db = Database.Open("ctXueji");
+            var select = "select *from students where students_number = @0 and students_password = @1";
+            var row = db.QuerySingle(select, input_Name, input_Password);
+            if (row != null){
+                    return "SOK";
+                }else
+                {
+                    return "sfail";
+                }
+        }else{
+            return "wtf";
+        }
+        
+    }
+    public static string sessionChange(int t)
+    {
+        string change = "";
+        change = t == 2 ? "下学期" : "上学期";
+        return change;
+    }
+    public static int yearfirst(DateTime t)
+    {
+        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+        string weeks = weekdays[Convert.ToInt32(t.DayOfWeek)];
+        var weeksint = Convert.ToInt16(weeks);
+        return weeksint;
+    }
+    public static int session(string t)
+    {
+        int temp = 0;
+        if (t == "02" || t == "03")
+        {
+            temp = 2;//下学期
+        }
+        else if (t == "08" || t == "09")
+        {
+            temp = 1;//上学期
+        }
+        return temp;
+    }
+
+    public static string sessiontime(string t)
+    {
+        string temp = "";
+
+        switch (t)
+        {
+            case "1":
+                temp = "01";
+                break;
+            case "2":
+                temp = "02";
+                break;
+            case "3":
+                temp = "03";
+                break;
+            case "4":
+                temp = "04";
+                break;
+            case "5":
+                temp = "05";
+                break;
+            case "6":
+                temp = "06";
+                break;
+            case "7":
+                temp = "07";
+                break;
+            case "8":
+                temp = "08";
+                break;
+            case "9":
+                temp = "09";
+                break;
+            default:
+                temp = t;
+                break;
+        }
+        return temp;
+    }
+
+    public static string Classesing(int t,string time_stamp)
+    {
+        string temp = "";
+        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+        string week = weekdays[Convert.ToInt32(DateTime.Now.DayOfWeek)];
+        if(t == Convert.ToInt16(week))
+        {
+            var dbTime = Convert.ToDateTime(time_stamp);
+            var nowTime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
+            if (nowTime > dbTime)
+            {
+                var subTime = nowTime - dbTime;
+                var subTimeh = subTime.Hours;
+                var subTimem = subTime.Minutes;
+                int min = subTimeh * 60 + subTimem;
+                if (min <= 90)
+                {
+                    temp = "ing";
+                }
+            }
+        }
+        return temp;
+    }
+    public static string LessonsOrder(int t)
+    {
+        string temp = "";
+
+        switch (t)
+        {
+            case 1:
+                temp = "第一大节";
+                break;
+            case 2:
+                temp = "第二大节";
+                break;
+            case 3:
+                temp = "第三大节";
+                break;
+            case 4:
+                temp = "第四大节";
+                break;
+            case 5:
+                temp = "第五大节";
+                break;
+            default:
+                temp = "";
+                break;
+        }
+        return temp;
+    }
+
     public static string MD5Encrypt16(string tobeEncrypt)
     {
         var md5 = new MD5CryptoServiceProvider();
@@ -45,33 +196,32 @@
         return t;
     }
 
-    public static string LearnTime()
+    public static string workTime()
     {
-        var t = "";
+        var t = "上课时间";
         var nowtime = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
-        var sone = "09:30:00";
-        var sonem = "10:00:00";
-        var stwo = "11:30:00";
-        var stwom = "13:00:00";
-        var xone = "14:30:00";
-        var xonem = "15:00:00";
-        var xtwo = "16:30:00";
-        var xtwos = "17:00:00";
-        if(nowtime >= Convert.ToDateTime(sone) && nowtime < Convert.ToDateTime(sonem))
+        var sone = Convert.ToDateTime("09:30:00");
+        var sonem = Convert.ToDateTime("10:00:00");
+        var stwo = Convert.ToDateTime("11:30:00");
+        var stwom = Convert.ToDateTime("13:00:00");
+        var xone = Convert.ToDateTime("14:30:00");
+        var xonem = Convert.ToDateTime("15:00:00");
+        var xtwo = Convert.ToDateTime("16:30:00");
+        var xtwos = Convert.ToDateTime("17:00:00");
+        var noonTimeStart = Convert.ToDateTime("11:30:00");
+        var noonTimeEnd = Convert.ToDateTime("13:00:00");
+        var workTimeStart = Convert.ToDateTime("08:00:00");
+        var workTimeEnd = Convert.ToDateTime("18:00:00");
+        if (nowtime >= workTimeStart && nowtime < workTimeEnd)
         {
-            t = "课间休息。。。。。。";
-        }
-        if (nowtime >= Convert.ToDateTime(stwo) && nowtime < Convert.ToDateTime(stwom))
+            if (nowtime >= sone && nowtime < sonem || nowtime >= stwo && nowtime < stwom ||
+                nowtime >= xone && nowtime < xonem || nowtime >= xtwo && nowtime < xtwos)
+            { t = "课间休息";}
+            else if (nowtime >= noonTimeStart && nowtime < noonTimeEnd)
+            { t = "午休时间";}
+        }else
         {
-            t = "课间休息。。。。。。";
-        }
-        if (nowtime >= Convert.ToDateTime(xone) && nowtime < Convert.ToDateTime(xonem))
-        {
-            t = "课间休息。。。。。。";
-        }
-        if (nowtime >= Convert.ToDateTime(xtwo) && nowtime < Convert.ToDateTime(xtwos))
-        {
-            t = "课间休息。。。。。。";
+            t = "课余时间";
         }
         return t;
     }
@@ -109,7 +259,7 @@
         return w;
     }
 
-public static Dictionary<int, int> StringToDictionary(string value)
+    public static Dictionary<int, int> StringToDictionary(string value)
     {
         Dictionary<int, int> str = new Dictionary<int, int>();
         string[] temp = value.Split('|');
@@ -159,7 +309,7 @@ public static Dictionary<int, int> StringToDictionary(string value)
         }
         return str;
     }
-    	
+
 
 }
 @var db = Database.Open("ctXueji");

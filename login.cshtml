@@ -1,38 +1,67 @@
-﻿
-@{
-    if (Session["name"] != null)
-    {
-        Response.Redirect("~/rollcall.cshtml");
-    }
-    var a = Request.QueryString["username"];
-}
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="autor" content="By 学生：江崟才 董权德 苏子豪 刘婉玥. 旁观教师：庄" />
     <meta name="description" content="btw：感谢我的学生对于我的信任和理解，深感无力于江崟才那愚蠢的深沉自负、董权德的后发制人、苏子豪的真-不成熟、刘婉玥的虚荣病态，希望在未来的人生道路上，他们可以尽其所能的避免重蹈覆辙。" />
     <title>校务管理系统 - Beta 0.1</title>
-    <link href="~/content/bootstrap.min.css" rel="stylesheet">
-    <link href="~/content/signin.css" rel="stylesheet">
-  </head>
+    <script src="scripts/jquery-3.3.1.js"></script>
+    <link href="content/bootstrap.min.css" rel="stylesheet">
+    <link href="content/signin.css" rel="stylesheet">
+    <script>
+        $(document).ready(function(e) {
+            $("#btnSubmit").click(function() { //给按钮加点击事件
+                //取用户名和密码和用户类型的临时变量
+                var u = $("#username").val(); //取输入的用户名
+                var p = $("#password").val(); //取输入的密码
+                var ut="1"; //麻痹MD5部分有问题，先这么赋值
+                //var ut = $("userType").val();  //取选择的用户类型
+                //调ajax
+                
+                $.ajax({
+                    url: "userMethods", //这就是要传给哪一个页去处理数据
+                    data: { //这就是要传出的数据的数组？
+                        username: u,
+                        password: p,
+                        userType: ut
+                    }, //传给userMethods.cshtml时候的变量名称都是冒号前面的名字，冒号后面的就是上面取表单数据的临时变量的名称
+                    type: "POST", //传出数据的方式
+                    dataType: "TEXT", //这个其实是接收数据的格式，注意是接收到的数据，如果不是TEXT，处理就会出错
+                    success: function(data) { //如果成功，也就是HTTP状态200了，拿回来的userMethods.cshtml吐出的数据，下面来处理它
+                        if (data.trim() == "TOK") //要加上去空格，防止内容里面有空格引起错误
+                        {
+                            window.location.href = "rollcall_add"; //js跳转页面
+                        } else if (data.trim() == "SOK"){
+                            window.location.href = "ok.html";
+                        } else if (data.trim() == "tfail"){
+                            $("#tips").html("教职工用户名或密码错误");
+                            $("#tips").css("color","red");
+                        } else if (data.trim() == "sfail"){
+                            $("#tips").html("学生用户名或密码错误");
+                            $("#tips").css("color","orange");
+                        }
+                    }
+                });
+            })
+        });
+    </script>
+</head>
 
-  <body class="text-center">
-    <form class="form-signin" action="~/validate.cshtml" method="post">
-      <img class="mb-4" src="" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">请登录</h1>
-              @if (a != null)
-        {
-            <h3>用户名或密码不正确。。请重试~</h3>
-        }
-      <label for="username" class="sr-only">用户名</label>
-      <input type="text" class="form-control"  name="username" id="username" placeholder="请输入账户~" value="@a" required autofocus>
-      <label for="password" class="sr-only">密码</label>
-      <input type="password" class="form-control"  name="password" id="password" placeholder="请输入密码~" required>
-
-      <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018. </p>
+<body class="text-center">
+    <form action="" method="POST" class="form-signin">
+        <img class="mb-4" src="" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal" id="tips">请登录</h1>
+        <label for="username" class="sr-only">用户名</label>
+        <input type="text" class="form-control" name="username" id="username" placeholder="请输入账户~" required autofocus>
+        <label for="password" class="sr-only">密码</label>
+        <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码~" required>
+        <label for="userType1">教职工</label><input type="radio" name="userType" id="userType" value="1" checked="checked">
+        <label for="userType2">学生</label><input type="radio" name="userType" id="userType" value="2">
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="btnSubmit">登录</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2017-2018. </p>
     </form>
-  </body>
+</body>
+
 </html>

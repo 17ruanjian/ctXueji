@@ -12,9 +12,8 @@
         var year = Request.Form["year"];
         var majors = Request.Form["majors"];
         var teachers = Request.Form["teachers"];
-        var coid = Request.Form["coid"];
-        var addclasses = "insert into classes (majors_id,classes_year,teachers_id,courses_id) values(@0,@1,@2,@3)";
-        db.Execute(addclasses, majors, year, teachers, coid);
+        var addclasses = "insert into classes (majors_id,classes_year,teachers_id) values(@0,@1,@2)";
+        db.Execute(addclasses, majors, year, teachers);
         Response.Redirect("~/classes");
     }
 }
@@ -40,14 +39,6 @@
         }
     </select>
     <br />
-    <strong>课程：</strong><br />
-    @{ 
-        var listc = "select *from courses";
-    }
-    @foreach (var courses in db.Query(listc))
-    {
-        <input type="checkbox" name="coid" id="coid" value=@courses.id>@courses.courses_name<br />
-    }
     <br />
     <br />
     <input class="btn btn-primary" type="submit" value="确认增加" />

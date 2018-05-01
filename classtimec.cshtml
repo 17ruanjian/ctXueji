@@ -1,0 +1,9 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var classes = "select * from View_ClassTeachers_list where teachers_name='" + Session["name"]+"'";
+}
+@foreach (var row in db.Query(classes))
+{
+    <a href="classtime3.cshtml?classes_id=@row.id">@row.classes_year @row.majors_name</a>
+}

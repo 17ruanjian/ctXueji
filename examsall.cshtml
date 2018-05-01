@@ -8,7 +8,31 @@
     var coid = Request.QueryString["coid"];
     var name = Request.QueryString["name"];
     var db = Database.Open("ctXueji");
-    var list = "select distinct exams_id from scores where courses_id = " + coid + " and classes_id = " + cid;
+
+    var couArr_courses = "select * from coursesArranging where courses_id=" + coid;
+    int coursesArranging__id = 0;
+    foreach (var c in db.Query(couArr_courses))
+    {
+        int x = 0;
+        string p = c.classes_id;
+        string[] temp = p.Split(',');
+        foreach (var a in temp)
+        {
+
+            if (a == cid)
+            {
+                x = 1;
+                break;
+            }
+        }
+        if (x == 1)
+        {
+            coursesArranging__id = c.id;
+            break;
+        }
+    }
+
+    var list = "select exams_id from scores where coursesArranging_id=" + coursesArranging__id;
 }
 <i><a href="~/courses.cshtml">班级</a>->><strong>当前（考试信息）</strong></i><font color=green>@name</font>
 @if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 1)
@@ -31,7 +55,7 @@
         var exams = "select *from exams where id = " + temp;
         var row1 = db.QuerySingle(exams, temp);
         <tr class="t">
-                <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
+            <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
             @if (row1.exams_type == 1)
             {
                 <td class="center">期中考试</td>

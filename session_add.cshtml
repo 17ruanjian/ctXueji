@@ -1,0 +1,87 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    //string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+    //string weeks = weekdays[Convert.ToInt32(Convert.ToDateTime("2018-01-01").DayOfWeek)];
+    //var weeksint = Convert.ToInt16(weeks);
+    //var time = DateTime.Now;
+    //int yeardays = time.DayOfYear;
+    if (IsPost)
+    {
+        var year = Request.Form["year"];
+        var month = Functions.sessiontime(Request.Form["month"]);
+        var day = Functions.sessiontime(Request.Form["day"]);
+
+
+        try
+        {
+            var yearsfirse = Convert.ToDateTime(year + "-01-01");
+            var times = Convert.ToDateTime(year + "-" + month + "-" + day);
+            var time = times;
+            int yeardays = time.DayOfYear;
+            int goday = 0;
+
+            if (Functions.yearfirst(yearsfirse) == 1)     //本年的第几周
+            {
+                if (Functions.yearfirst(times) == 1)
+                {
+                    goday = yeardays / 7;
+                    goday += 1;
+                    var add = "insert into weekArranging (wa_years,wa_session,wa_startWeek,wa_endWeek) values(@0,@1,@2,@3)";
+                    db.Execute(add, year, Functions.session(month), goday, goday + 17);
+
+                    <p style="color:red;">@goday</p>
+                }
+                else
+                {
+                    <p style="color:red;">不符合条件的日期</p>
+                }
+            }
+            else
+            {
+                if (Functions.yearfirst(times) == 1)
+                {
+                    goday = (yeardays + Functions.yearfirst(yearsfirse) - 1) / 7;
+                    goday += 1;
+                    var add = "insert into weekArranging (wa_years,wa_session,wa_startWeek,wa_endWeek) values(@0,@1,@2,@3)";
+                    db.Execute(add, year, Functions.session(month), goday, goday + 17);
+                }
+                else
+                {
+                    <p style="color:red;">不符合条件的日期</p>
+                }
+            }
+        }
+        catch
+        {
+            <span style="color:grey;">输入的时间格式不正确！</span>
+        }
+
+
+        @*if (weeksint == 1)
+            {
+                goday = yeardays / 7;
+                var add = "insert into weekArranging (wa_years,wa_session,wa_startWeek,wa_endWeek) values(@0,@1,@2,@3)";
+                db.Execute(add,year,Functions.session(month),)
+
+                <p style="color:red;">@goday</p>
+            }
+            else
+            {
+                <p style="color:red;">不符合条件的日期</p>
+            }*@
+    }
+}
+<form method="post">
+    <p style="color:#ff6a00;">添加日期的当天须为周一</p>
+    请输入起始日期:
+    <input type="text" name="year" id="year" />
+    年
+    <input type="text" name="month" id="month" />
+    月
+    <input type="text" name="day" id="day" />
+    日
+    <br />
+    <input type="submit" value="提交" />
+
+</form>

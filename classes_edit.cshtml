@@ -23,8 +23,8 @@
         var majors = Request.Form["majors"];
         var teachers = Request.Form["teachers"];
         var coid = Convert.ToString(Request.Form["coid"]);
-        var addclasses = "update classes set majors_id=@0,classes_year=@1,teachers_id=@2,courses_id=@3 where id = @4";
-        db.Execute(addclasses, majors, year, teachers, coid, id);
+        var addclasses = "update classes set majors_id=@0,classes_year=@1,teachers_id=@2 where id = @4";
+        db.Execute(addclasses, majors, year, teachers, id);
         Response.Redirect("~/classes");
     }
 }
@@ -59,21 +59,6 @@
             }
         }
     </select>
-    <br />
-    <strong>课程：</strong><br />
-    @{
-        var listc = "select *from courses";
-    }
-    @foreach (var courses in db.Query(listc))
-    {
-        var a = courses.teachers_id;
-        var listt = "select *from teachers where id=" + a;
-        var name = db.QuerySingle(listt, a);
-        <input type="checkbox" name="coid" id="coid" value=@courses.id
-               @{ string temp = row.courses_id; string[] temparry = temp.Split(','); }
-               @foreach (var i in temparry) { if (Convert.ToInt16(i) == courses.id) { @: checked="checked"
-               } }>@courses.courses_name @name.teachers_name<br />
-        }
     <br />
     <br />
     <input class="btn btn-primary" type="submit" value="确认修改" />

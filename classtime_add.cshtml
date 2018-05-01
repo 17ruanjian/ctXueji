@@ -1,0 +1,83 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    var week_id = Convert.ToInt16(Request.QueryString["week_id"]);
+    var order_id = Convert.ToInt16(Request.QueryString["order_id"]);
+    var courses = "select * from courses";
+    var classes = "select * from View_classes_one";
+    var room = "select * from class_room";
+    var teachers = "select * from teachers where teachers_type = 1";
+    var week = "select * from weekArranging";
+    if (IsPost)
+    {
+        var cours = Convert.ToInt16(Request.Form["courses"]);
+        var class_id = Convert.ToInt16(Request.Form["classes"]);
+        var class_room = Convert.ToInt16(Request.Form["room"]);
+        var teacher = db.QuerySingle("select teachers_id from courses where id=" + cours);
+        var weeksession = Convert.ToInt16(Request.Form["weeksession"]);
+        var start = Convert.ToInt16(Request.Form["start"]);
+        var end = Convert.ToInt16(Request.Form["end"]);
+        var add = "insert into coursesArranging (courses_id,classes_id,teachers_id,weekArranging_id,weekStart,weekEnd,lessonsOrder,classroom_id,weekDays) values(@0,@1,@2,@3,@4,@5,@6,@7,@8)";
+        db.Execute(add, cours, class_id, teacher.teachers_id, weeksession, start, end, order_id, class_room, week_id);
+    }
+}
+<h2>周 @week_id - 第 @order_id 课</h2>
+<form method="post">
+    选择课程
+    <select name="courses" id="courses">
+        <option>--选择课程--</option>
+        @foreach (var cou in db.Query(courses))
+        {
+            var t_name = "select teachers_name from teachers where id=" + cou.teachers_id;
+            var t = db.QuerySingle(t_name);
+            <option value=@cou.id>@cou.courses_name (@t.teachers_name)</option>
+        }
+    </select>
+    选择班级
+    <select name="classes" id="classes">
+        <option>--选择班级--</option>
+        @foreach (var cla in db.Query(classes))
+        {
+            <option value=@cla.id>@cla.classes_year @cla.majors_name</option>
+        }
+    </select>
+    选择教室
+    <select name="room" id="room">
+        <option>--选择教室--</option>
+        @foreach (var ro in db.Query(room))
+        {
+            <option value=@ro.id>@ro.class_name</option>
+        }
+    </select>
+    <br />
+    选择学期
+    <select name="weeksession" id="weeksession">
+        <option>--选择学期--</option>
+        @foreach (var we in db.Query(week))
+        {
+            <option value=@we.id>@we.wa_years @Functions.sessionChange(we.wa_session)</option>
+        }
+    </select>
+    <br />
+    选择起始周到结束周
+    <select name="start" id="start">
+        <option value=1>--起始周--</option>
+        @for (int i = 1; i <= 18; i++)
+        {
+            <option>@i</option>
+        }
+    </select>
+    --
+    <select name="end" id="end">
+        <option value=18>--结束周--</option>
+        @for (int i = 1; i <= 18; i++)
+        {
+            <option>@i</option>
+        }
+    </select>
+    <span style="color:#ff6a00;">不选择默认为 1-18 </span>
+    <input type="hidden" name="week" id="week" value=@week_id>
+    <input type="hidden" name="order" id="order" value=@order_id>
+    <br />
+    <input type="submit" value="提交" />
+</form>

@@ -1,0 +1,38 @@
+﻿
+@{
+    if (Session["name"] != null)
+    {
+        Response.Redirect("~/rollcall.cshtml");
+    }
+    var a = Request.QueryString["username"];
+}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="autor" content="By 学生：江崟才 董权德 苏子豪 刘婉玥. 旁观教师：庄" />
+    <meta name="description" content="btw：感谢我的学生对于我的信任和理解，深感无力于江崟才那愚蠢的深沉自负、董权德的后发制人、苏子豪的真-不成熟、刘婉玥的虚荣病态，希望在未来的人生道路上，他们可以尽其所能的避免重蹈覆辙。" />
+    <title>校务管理系统 - Beta 0.1</title>
+    <link href="~/content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/content/signin.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+    <form class="form-signin" action="~/validate.cshtml" method="post">
+      <img class="mb-4" src="" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+              @if (a != null)
+        {
+            <h3>用户名或密码不正确。。请重试~</h3>
+        }
+      <label for="username" class="sr-only">用户名</label>
+      <input type="text" class="form-control"  name="username" id="username" placeholder="请输入账户~" value="@a" required autofocus>
+      <label for="password" class="sr-only">密码</label>
+      <input type="password" class="form-control"  name="password" id="password" placeholder="请输入密码~" required>
+
+      <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018. </p>
+    </form>
+  </body>
+</html>

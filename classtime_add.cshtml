@@ -3,9 +3,9 @@
     var db = Database.Open("ctXueji");
     var week_id = Convert.ToInt16(Request.QueryString["week_id"]);
     var order_id = Convert.ToInt16(Request.QueryString["order_id"]);
-    var courses = "select * from courses";
-    var classes = "select * from View_classes_one";
-    var room = "select * from class_room";
+    var courses = "select * from courses order by courses_name";
+    var classes = "select * from View_classes_one order by classes_year";
+    var room = "select * from class_room order by class_floor,class_name";
     var teachers = "select * from teachers where teachers_type = 1";
     var week = "select * from weekArranging";
     if (IsPost)

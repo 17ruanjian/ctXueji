@@ -1,22 +1,24 @@
 ﻿@{
     Layout = "~/_xuejiLayout.cshtml";
     var db = Database.Open("ctXueji");
+
+    int teachers_id = Convert.ToInt16(Session["authority"]);
     if (Session["name"] == null || Session["username"] == null)
     {
         Response.Redirect("~/login.cshtml");
     }
-    var list = "select *from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id";
+    var list = "select *from View_ClassTeachers_list";
 }
 <script>
-        $(document).ready(function () {
-            $('#table_id').DataTable();
-        });
+    $(document).ready(function () {
+        $('#table_id').DataTable();
+    });
 </script>
-@if (Convert.ToInt16(Session["authority"]) == 3)
+@if (teachers_id == 3)
 {
     list += " where teachers_name = " + "'" + Session["name"] + "'";
 }
-@if (Convert.ToInt16(Session["authority"]) == 1)
+@if (teachers_id == 1)
 {
     var listCommand = "select majors_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
     var cx = db.QuerySingle(listCommand);
@@ -32,7 +34,7 @@
         <tbody>
             @foreach (var c in jsskbj)
             {
-                list = "select * from classes inner join majors on classes.majors_id = majors.id inner join teachers on classes.teachers_id = teachers.id where classes.majors_id = " + c;
+                list = "select * from View_ClassTeachers_list where majors_id = " + c;
 
                 foreach (var row in db.Query(list))
                 {
@@ -40,22 +42,34 @@
                         <td class="center">@row.classes_year@row.majors_name</td>
                         <td class="center">
                             @{
-                                string temp = row.courses_id;
-                                string[] temparry = temp.Split(',');
-                            }
-                            @foreach (var i in temparry)
-                            {
-                                var courseslist = "select *from courses where id=" + i;
-                                var tp = db.QuerySingle(courseslist, i);
-                                if (tp == null)
+                                int cid = row.id;
+                                var ca = "select DISTINCT classes_id from View_coursesArranging_one where teachers_name=" + "'" + Session["name"] + "'";
+                                foreach (var cla in db.Query(ca))
                                 {
-                                    continue;
-                                }
-                                else
-                                {
-                                    <strong><a class="btn btn-primary" href="~/examsall.cshtml?cid=@row.id&coid=@tp.id&name=@tp.courses_name">@tp.courses_name</a></strong><br />
-                                }
+                                    string classes = cla.classes_id;
+                                    string[] classes_id = classes.Split(',');
+                                    int t = 0;
+                                    foreach (var p in classes_id)
+                                    {
+                                        if (Convert.ToInt16(p) == cid)
+                                        {
+                                            t = 1;
+                                            break;
+                                        }
+                                    }
+                                    if (t == 1)
+                                    {
+                                        var ca_teacher = "select DISTINCT courses_name,courses_id from View_coursesArranging_one where teachers_name=" + "'" + Session["name"] + "'and classes_id='" + classes + "'";
+                                        foreach (var value in db.Query(ca_teacher))
+                                        {
+                                            <strong><a class="btn btn-primary" href="~/examsall.cshtml?cid=@cid&coid=@value.courses_id&name=@value.courses_name">@value.courses_name</a></strong>
+                                            <br />
 
+                                        }
+
+                                    }
+
+                                }
                             }
                         </td>
                     </tr>
@@ -73,7 +87,7 @@ else
             <tr class="t">
                 <th>班级</th>
                 <th>课程</th>
-                @if (Convert.ToInt16(Session["authority"]) == 2)
+                @if (teachers_id == 2)
                 {
                     <th>操作</th>
                 }
@@ -85,6 +99,7 @@ else
                 <tr class="t">
                     <td class="center">@row.classes_year@row.majors_name</td>
                     <td class="center">
+
                         @{
                             string temp = row.courses_id;
                             string[] temparry = temp.Split(',');
@@ -104,7 +119,7 @@ else
 
                         }
                     </td>
-                    @if (Convert.ToInt16(Session["authority"]) == 2)
+                    @if (teachers_id == 2)
                     {
                         <td class="center"><a class="btn btn-danger" href="~/delcourses.cshtml?id=@row.id">删除</a></td>
                     }

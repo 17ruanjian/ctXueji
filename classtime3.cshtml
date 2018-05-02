@@ -73,7 +73,7 @@
                         }
                         @foreach (var cellRow in db.Query(week))
                         {
-                            <span><h1>@i - @n</h1>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br>
+                            <span>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br>
                         }
                     </div>
                 }

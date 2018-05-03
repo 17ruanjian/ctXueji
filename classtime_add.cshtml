@@ -3,6 +3,10 @@
     var db = Database.Open("ctXueji");
     var week_id = Convert.ToInt16(Request.QueryString["week_id"]);
     var order_id = Convert.ToInt16(Request.QueryString["order_id"]);
+    if (week_id > 5 || order_id > 6 || week_id == 0 || order_id == 0)
+    {
+        Response.Redirect("classtime");
+    }
     var courses = "select * from courses order by courses_name";
     var classes = "select * from View_classes_one order by classes_year";
     var room = "select * from class_room order by class_floor,class_name";
@@ -21,8 +25,41 @@
         db.Execute(add, cours, class_id, teacher.teachers_id, weeksession, start, end, order_id, class_room, week_id);
     }
 }
+<style>
+    li {
+        color: #ff6a00;
+        list-style-type: none;
+    }
+</style>
+<script>
+
+    
+    function changePost() {
+
+        var courses = document.getElementById("courses").value;
+        var classes = document.getElementById("classes").value;
+        var room = document.getElementById("room").value;
+
+        if (courses == "--选择课程--" || classes == "--选择班级--" || room == "--选择教室--") {
+           
+                var nv = document.getElementById("ero1").innerHTML = "课程不能为空";
+            
+                var nv = document.getElementById("ero2").innerHTML = "班级不能为空";
+            
+                var nv = document.getElementById("ero3").innerHTML = "教室不能为空";
+           
+        } else {
+            document.form1.submit();
+        }
+    }
+</script>
+<ul>
+    <li id="ero1" name="a"></li>
+    <li id="ero2" name="a"></li>
+    <li id="ero3" name="a"></li>
+</ul>
 <h2>周 @week_id - 第 @order_id 课</h2>
-<form method="post">
+<form name="form1" method="post">
     选择课程
     <select name="courses" id="courses">
         <option>--选择课程--</option>
@@ -55,7 +92,10 @@
         <option>--选择学期--</option>
         @foreach (var we in db.Query(week))
         {
-            <option value=@we.id>@we.wa_years @Functions.sessionChange(we.wa_session)</option>
+            <option value=@we.id @if (Convert.ToInt16(Session["session"]) == we.id)
+                                 {
+                                     @:selected="selected"
+                                 }>@we.wa_years @Functions.sessionChange(we.wa_session)</option>
         }
     </select>
     <br />
@@ -79,5 +119,5 @@
     <input type="hidden" name="week" id="week" value=@week_id>
     <input type="hidden" name="order" id="order" value=@order_id>
     <br />
-    <input type="submit" value="提交" />
+    <input type="button" onclick="changePost()" value="提交" />
 </form>

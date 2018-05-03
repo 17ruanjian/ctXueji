@@ -1,36 +1,15 @@
 ﻿@{
     Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
     var db = Database.Open("ctXueji");
-    string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
-
     var week = "";
-    string nowyear = DateTime.Now.Year.ToString();
-    string weeks = weekdays[Convert.ToInt32(Convert.ToDateTime(nowyear + "-01-01").DayOfWeek)];
-    var weeksint = Convert.ToInt16(weeks);
-    var time = DateTime.Now;
-    var timeyear = time.Year;
-    int yeardays = time.DayOfYear;
-    int goday = 0;
-    if (weeksint == 1)     //本年的第几周
-    {
-        goday = yeardays / 7;
-        goday += 1;
-    }
-    else
-    {
-        goday = (yeardays + weeksint - 1) / 7;
-    }
-    var weekArranging = "select * from weekArranging where wa_years = " + timeyear;
-    foreach (var weekA in db.Query(weekArranging))
-    {
-        if (goday > weekA.wa_startWeek && goday < weekA.wa_endWeek)
-        {
-            Session["session"] = weekA.id;
-        }
-    }
+    Functions.Sessions();
     var authority = Session["authority"].ToString();
 }
-@goday
+@Functions.NowYearsWeek()
 <style>
     .t {
         height: 80px;
@@ -79,6 +58,17 @@
                                 <span>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br />
                                 <hr />
                             }
+                            @if (@Functions.Classesing(i, r.date_times) == "ing")
+                            {
+                                var teachers = "select * from teachers where teachers_type=1";
+                                foreach (var row in db.Query(teachers))
+                                {
+                                    var teachersroom = "select * from View_coursesArranging_one where teachers_id=" + row.id + "and weekDays ="+i+"and lessonsOrder="+n;
+                                    var zy = db.QuerySingle(teachersroom);
+                                <span>@row.teachers_name @if (zy != null)
+                                                          {<span>《-- @zy.class_name</span>}</span><br/>
+                                }
+                            }
                             <a href="~/classtime_add.cshtml?week_id=@i&order_id=@n">新增</a>
                             <a href="~/classtime_edit.cshtml?week_id=@i&order_id=@n">修改</a>
                         </div>
@@ -108,7 +98,7 @@
                             }
                             @foreach (var cellRow in db.Query(week))
                             {
-                                <span>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br>
+                                <span><h1>@i - @n</h1>@cellRow.class_name 教室<br>@cellRow.teachers_name<br>(@cellRow.courses_name)</span><br>
                             }
                         </div>
                     }
@@ -117,31 +107,3 @@
         }
     }
 </div>
-@*<div class="row">
-        <div class="col-md-2 c">First(8:00-9:30)</div>
-    </div>*@
-@*<div class="row">
-        <div class="col-md-2 c">Second<br />(10:00-11:30)</div>
-    </div>
-    <div class="row">
-        <div class="col-md-2 c">Third<br />(13:00-14:30)</div>
-    </div>
-    <div class="row">
-        <div class="col-md-2 c">Fourth<br />(15:00-16:30)</div>
-    </div>
-    <div class="row">
-        <div class="col-md-2 c">Fifth<br />(17:00-18:30)</div>
-    </div>*@
-
-
-
-@*<p class="popover-options">
-        <a href="#" type="button" class="" title="<h2>Title</h2>"
-           data-container="body" data-toggle="popover" data-content="
-                                                                         <h4>Popover 中的一些内容 —— options 方法</h4>">
-                Popover
-            </a>
-    </p>
-    <script>
-            $(function () { $(".popover-options a").popover({html : true });});
-    </script>*@

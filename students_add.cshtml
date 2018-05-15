@@ -20,21 +20,47 @@
         var status = Convert.ToInt16(Request.Form["status"]);
         var insert = "INSERT INTO students (students_number,students_name,students_sex,students_age,students_phone,students_qq,students_wx,classes_id,students_status) Values(@0, @1,@2, @3,@4,@5,@6,@7,@8)";
         db.Execute(insert, number, name, sex, age, phone, qq, wx, classes, status);
-        var students = "select id,classes_id from students where students_number=@0 and students_name=@1";
-        var sid = db.QuerySingle(students, number, name);
-        var students_id = sid.id;
-        var classes_id = sid.classes_id;
-        var courses = "select distinct exams_id,courses_id from scores where classes_id = " + classes_id;
-        foreach (var i in db.Query(courses))
-        {
-            var s = i.exams_id;
-            var c = i.courses_id;
-            var add = "insert into scores(exams_id,courses_id,students_id,classes_id) values(@0,@1,@2,@3)";
-            db.Execute(add, s, c, students_id, classes_id);
-        }
+        //var students = "select id,classes_id from students where students_number=@0 and students_name=@1";
+        //var sid = db.QuerySingle(students, number, name);
+        //var students_id = sid.id;
+        //var classes_id = sid.classes_id;
+
+        //var view_class_id = "select * from View_scores_coursesArranging";
+        //foreach(var c in db.Query(view_class_id))
+        //{
+        //    string t = c.classes_id;
+        //    string[] temp = t.Split(',');
+        //    int a = 0;
+        //    foreach (var item in temp)
+        //    {
+        //        int ca_cid = Convert.ToInt16(item);
+
+        //        if (ca_cid == classes_id)
+        //        {
+        //            a = 1;
+        //            break;
+        //        }
+        //    }
+        //    if (a == 1)
+        //    {
+        //        var select = "select * from View_scores_coursesArranging where id = "+c.id;
+        //        var one_students = db.QuerySingle(select);
+        //        var update = "update scores set students_value = " + one_students.students_value + "|" + students_id + "=0" + " where id=c.id";
+        //        db.Execute(update);
+        //    }
+        //}
+
+        //var courses = "select distinct exams_id,courses_id from scores where classes_id = " + classes_id;
+        //foreach (var i in db.Query(courses))
+        //{
+        //    var s = i.exams_id;
+        //    var c = i.courses_id;
+        //    var add = "insert into scores(exams_id,courses_id,students_id,classes_id) values(@0,@1,@2,@3)";
+        //    db.Execute(add, s, c, students_id, classes_id);
+        //}
         Response.Redirect("~/students?classes_id=" + classes);
     }
-}
+    }
 <form method="post" class="navbar-form">
     <strong>学号：</strong><br />
     <input class="form-control" type="text" id="number" name="number" /><br />

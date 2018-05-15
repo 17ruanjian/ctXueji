@@ -34,6 +34,9 @@
     }
 }
 <i><a href="~/courses.cshtml">班级</a>->><a href="~/examsall.cshtml?cid=@cid&coid=@coid">考试信息</a>->><strong>当前（详情）</strong></i><font color=green>@name</font><br />
+@if(Convert.ToInt16(Session["authority"]) == 1){
+<span style="color: orangered; size: 20px;">讲师成绩只能提交一次请谨慎操作！</span>
+}
 <form method="post">
     <table class="table table-striped table-bordered table-hover bootstrap-datatable datatable">
         <tr class="t">
@@ -43,12 +46,17 @@
         </tr>
         @foreach (var row in dic_value)
         {
+
             var sid = exid;
             var temp = row.Key;
             var exams = "select *from exams where id=@0";
             var row2 = db.QuerySingle(exams, sid);
             var students = "select *from students where id = @0";
             var row1 = db.QuerySingle(students, temp);
+            if (row1 == null)
+            {
+                continue;
+            }
             <tr class="t">
                 <td class="center">@row1.students_name</td>
                 <td class="center">@row2.exams_name</td>
@@ -66,11 +74,23 @@
                     else if (Convert.ToInt16(Session["authority"]) == 1)
                     {
 
-
+                        if (row.Value == 0)
+                        {
                             <div style="width:10em">
                                 <input class="form-control" style="width:8em" type="text" id="value" name="value" value=@row.Value>
-                                <input type="hidden" name="sid" id="sid" value=@temp />
+                                <input type="hidden" name="sid" id="sid" value=@temp>
                             </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" id="value" name="value" value=@row.Value>
+                            <input type="hidden" name="sid" id="sid" value=@temp>
+                            <span>@row.Value</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>@row.Value</span>
                     }
 
                 </td>

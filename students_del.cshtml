@@ -13,8 +13,8 @@
         var sid = Request.Form["id"];
         var deleteCommand = "DELETE FROM students WHERE id = @0";
         db.Execute(deleteCommand, sid);
-        var delete = "delete from scores where students_id = @0";
-        db.Execute(delete, id);
+        //var delete = "delete from scores where students_id = @0";
+        //db.Execute(delete, id);
         Response.Redirect("~/students");
     }
 }

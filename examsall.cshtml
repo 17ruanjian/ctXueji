@@ -43,10 +43,10 @@
         <th>考试名称</th>
         <th>考试类型</th>
         <th>考试时间</th>
-        @if (Convert.ToInt16(Session["authority"]) == 2)
+        @*@if (Convert.ToInt16(Session["authority"]) == 2)
         {
             <th>操作</th>
-        }
+        }*@
     </tr>
     @foreach (var row in db.Query(list))
     {
@@ -68,10 +68,10 @@
                 <td class="center">其它考试</td>
             }
             <td class="center">@row1.exams_date</td>
-            @if (Convert.ToInt16(Session["authority"]) == 2)
+            @*@if (Convert.ToInt16(Session["authority"]) == 2)
             {
                 <td class="center"><a class="btn btn-success" href="~/editexams.cshtml?cid=@cid&coid=@coid&id=@row1.id">修改</a></td>
-            }
+            }*@
         </tr>
     }
 </table>

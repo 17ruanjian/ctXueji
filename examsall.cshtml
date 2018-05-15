@@ -32,46 +32,65 @@
     }
 
     var list = "select exams_id from scores where coursesArranging_id=" + coursesArranging__id;
+    int au = Convert.ToInt16(Session["authority"]);
 }
-<i><a href="~/courses.cshtml">班级</a>->><strong>当前（考试信息）</strong></i><font color=green>@name</font>
-@if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 1)
+<script>
+    $(document).ready(function () {
+        $('#table_id').dataTable( {
+            
+            "paging": false,
+            "searching": false,
+            "info": false,
+            "order": true,
+
+            
+            "orderFixed": [2, 'desc'] 
+        } );
+    });
+</script>
+<i><a href="~/courses_list.cshtml">班级</a>->><strong>当前（考试信息）</strong></i><font color=green>@name</font>
+@if (au== 2 || au== 1)
 {
-    <a class="btn btn-primary" href="~/exams_add.cshtml?cid=@cid&coid=@coid">新增考试</a><br />
+    <a class="btn btn-primary" href="~/exams_add.cshtml?cid=@cid&coid=@coid&name=@name">新增考试</a><br />
 }
-<table class="table table-striped table-bordered table-hover bootstrap-datatable datatable">
-    <tr>
-        <th>考试名称</th>
-        <th>考试类型</th>
-        <th>考试时间</th>
-        @*@if (Convert.ToInt16(Session["authority"]) == 2)
-        {
-            <th>操作</th>
-        }*@
-    </tr>
-    @foreach (var row in db.Query(list))
-    {
-        var temp = row.exams_id;
-        var exams = "select *from exams where id = " + temp;
-        var row1 = db.QuerySingle(exams, temp);
-        <tr class="t">
-            <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
-            @if (row1.exams_type == 1)
-            {
-                <td class="center">期中考试</td>
-            }
-            else if (row1.exams_type == 2)
-            {
-                <td class="center">期末考试</td>
-            }
-            else
-            {
-                <td class="center">其它考试</td>
-            }
-            <td class="center">@row1.exams_date</td>
-            @*@if (Convert.ToInt16(Session["authority"]) == 2)
-            {
-                <td class="center"><a class="btn btn-success" href="~/editexams.cshtml?cid=@cid&coid=@coid&id=@row1.id">修改</a></td>
-            }*@
+<table id="table_id" class="table table-striped table-bordered" style="width: 100%">
+    <thead>
+        <tr>
+            <th>考试名称</th>
+            <th>考试类型</th>
+            <th>考试时间</th>
+            @if (au== 2)
+                {
+                    <th>操作</th>
+                }
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var row in db.Query(list))
+        {
+            var temp = row.exams_id;
+            var exams = "select *from exams where id = " + temp;
+            var row1 = db.QuerySingle(exams, temp);
+            <tr class="t">
+                <td class="center"><a href="~/details.cshtml?cid=@cid&exid=@row1.id&coid=@coid&name=@name">@row1.exams_name</a></td>
+                @if (row1.exams_type == 1)
+                {
+                    <td class="center">期中考试</td>
+                }
+                else if (row1.exams_type == 2)
+                {
+                    <td class="center">期末考试</td>
+                }
+                else
+                {
+                    <td class="center">其它考试</td>
+                }
+                <td class="center">@row1.exams_date</td>
+                @if (au== 2)
+                    {
+                        <td class="center"><a class="btn btn-success" href="~/exams_edit.cshtml?cid=@cid&coid=@coid&id=@row1.id&name=@name">修改</a></td>
+                    }
+            </tr>
+        }
+    </tbody>
 </table>

@@ -6,18 +6,19 @@
     }
     var cid = Request.QueryString["cid"];
     var coid = Request.QueryString["coid"];
+    var name1 = Request.QueryString["name"];
     var db = Database.Open("ctXueji");
     if (IsPost)
     {
         var name = Convert.ToString(Request.Form["name"]);
         var date = Request.Form["date"];
         var type = Request.Form["type"];
-        var hours = Request.Form["hours"];
-        var day = Request.Form["day"];
-        var min = Request.Form["min"];
-        var t = date +"-"+ hours+"时" + min+"分";
+        //var hours = Request.Form["hours"];
+        //var day = Request.Form["day"];
+        //var min = Request.Form["min"];
+        //var t = date + "-" + hours + "时" + min + "分";
         var add = "insert into exams (exams_name,exams_date,exams_type) values(@0,@1,@2)";
-        db.Execute(add, name, t, type);
+        db.Execute(add, name, date, type);
         var listexams = "select id from exams where exams_name = @0 and exams_type = " + type;
         var exid = db.QuerySingle(listexams, name);
         var liststudents = "select id from students where classes_id = " + cid;
@@ -53,59 +54,27 @@
         foreach (var row in db.Query(liststudents))
         {
             var sid = row.id;
-            student_value.Add(sid,0);
+            student_value.Add(sid, 0);
         }
 
         var addscores = "insert into scores (exams_id,students_value,coursesArranging_id) values (@0,@1,@2)";
         db.Execute(addscores, valueexid, Functions.DictionaryToString(student_value), coursesArranging__id);
-        Response.Redirect("~/examsall?cid=" + cid + "&coid=" + coid);
+        Response.Redirect("~/examsall?cid=" + cid + "&coid=" + coid + "&name=" + name1);
     }
 }
+<link href="~/Content/date.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/date.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#date').date({ theme: "datetime" });
+    });
+</script>
 <form method="post" class="navbar-form">
     <strong>考试名称：</strong><br />
     <input class="form-control" type="text" id="name" name="name" /><br />
     <strong>考试日期：</strong><br />
-    <input type="text" class="datepicker form-control" id="date" name="date" /><br />
-    <select class="form-control" id="hours" name="hours">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-        <option value="19">19</option>
-        <option value="20">20</option>
-        <option value="21">21</option>
-        <option value="22">22</option>
-        <option value="23">23</option>
-        <option value="24">24</option>
-    </select>&nbsp;:&nbsp;
-    <select class="form-control" id="min" name="min">
-        <option value="00">00</option>
-        <option value="10">10</option>
-        <option value="15">15</option>
-        <option value="20">20</option>
-        <option value="25">25</option>
-        <option value="30">30</option>
-        <option value="35">35</option>
-        <option value="40">40</option>
-        <option value="45">45</option>
-        <option value="50">50</option>
-        <option value="55">55</option>
-
-    </select>
+    <input type="text" class="form-control" id="date" name="date" />
     <br />
     <strong>考试类型：</strong><br />
     <select class="form-control" id="type" name="type">
@@ -121,3 +90,4 @@
     </select><br />
     <input class="btn btn-primary" type="submit" value="确认添加" />
 </form>
+<div id="datePlugin"></div>

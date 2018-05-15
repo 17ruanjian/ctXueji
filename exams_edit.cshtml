@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    var id = Request.QueryString["id"];
+    var cid = Request.QueryString["cid"];
+    var coid = Request.QueryString["coid"];
+    var name1 = Request.QueryString["name"];
+    var db = Database.Open("ctXueji");
+    var exam = "select * from exams where id=" + id;
+    var row = db.QuerySingle(exam);
+    if (IsPost)
+    {
+        var name = Convert.ToString(Request.Form["name"]);
+        var date = Request.Form["date"];
+        var type = Request.Form["type"];
+        //var hours = Request.Form["hours"];
+        //var day = Request.Form["day"];
+        //var min = Request.Form["min"];
+        //var t = date + "-" + hours + "时" + min + "分";
+        var update = "update exams set exams_name = @0,exams_date = @1,exams_type=@2 where id = @3";
+        db.Execute(update, name, date, type,id);
+        //var listexams = "select id from exams where exams_name = @0 and exams_type = " + type;
+        //var exid = db.QuerySingle(listexams, name);
+        //var liststudents = "select id from students where classes_id = " + cid;
+        //var valueexid = exid.id;
+
+
+        //var Studentsvalue = "select * from coursesArranging where courses_id=" + coid;
+        //int coursesArranging__id = 0;
+        //foreach (var c in db.Query(Studentsvalue))
+        //{
+        //    int x = 0;
+        //    string p = c.classes_id;
+        //    string[] temp = p.Split(',');
+        //    foreach (var a in temp)
+        //    {
+
+        //        if (a.Trim() == cid)
+        //        {
+        //            x = 1;
+        //            break;
+        //        }
+        //    }
+        //    if (x == 1)
+        //    {
+        //        coursesArranging__id = c.id;
+        //        break;
+        //    }
+        //}
+
+        //Dictionary<int, int> student_value = new Dictionary<int, int>();
+
+
+        //foreach (var row in db.Query(liststudents))
+        //{
+        //    var sid = row.id;
+        //    student_value.Add(sid, 0);
+        //}
+
+        //var addscores = "insert into scores (exams_id,students_value,coursesArranging_id) values (@0,@1,@2)";
+        //db.Execute(addscores, valueexid, Functions.DictionaryToString(student_value), coursesArranging__id);
+        Response.Redirect("~/examsall?cid=" + cid + "&coid=" + coid + "&name=" + name1);
+    }
+}
+<link href="~/Content/date.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/date.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#date').date({ theme: "datetime" });
+    });
+</script>
+<form method="post" class="navbar-form">
+    <strong>考试名称：</strong><br />
+    <input class="form-control" type="text" id="name" name="name" value=@row.exams_name><br />
+    <strong>考试日期：</strong><br />
+    <input type="text" class="form-control" id="date" name="date" value=@row.exams_date/>
+    <br />
+    <strong>考试类型：</strong><br />
+    <select class="form-control" id="type" name="type">
+    <option value=1 @if(row.exams_type == 1){ @:selected="selected" 
+                    }>期中考试</option>
+    <option value=2 @if(row.exams_type == 2){ @:selected="selected"  
+                    }>期末考试</option>
+    <option value=3 @if(row.exams_type == 3){ @:selected="selected"  
+                    }>其他考试</option>
+    </select><br />
+    <input class="btn btn-primary" type="submit" value="确认修改" />
+</form>
+<div id="datePlugin"></div>

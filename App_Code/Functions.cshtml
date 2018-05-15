@@ -4,6 +4,45 @@
 @using System.Security.Cryptography;
 @functions{
 
+    public static void Sessions()
+    {
+        var db = Database.Open("ctXueji");
+        var time = DateTime.Now;
+        var timeyear = time.Year;
+        var weekArranging = "select * from weekArranging where wa_years = " + timeyear;
+        foreach (var weekA in db.Query(weekArranging))
+        {
+            if (Functions.NowYearsWeek() > weekA.wa_startWeek && Functions.NowYearsWeek() < weekA.wa_endWeek)
+            {
+                Session["session"] = weekA.id;
+            }
+        }
+    }
+
+
+    public static int NowYearsWeek()
+    {
+        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+
+        string nowyear = DateTime.Now.Year.ToString();
+        string weeks = weekdays[Convert.ToInt32(Convert.ToDateTime(nowyear + "-01-01").DayOfWeek)];
+        var weeksint = Convert.ToInt16(weeks);
+        var time = DateTime.Now;
+        int yeardays = time.DayOfYear;
+        int goday = 0;
+        if (weeksint == 1)     //本年的第几周
+        {
+            goday = yeardays / 7;
+            goday += 1;
+        }
+        else
+        {
+            goday = (yeardays + weeksint - 1) / 7;
+        }
+        return goday;
+    }
+
+
     public static string userMethods_login(string input_Name, string input_Password, string userType)
     {
         if(userType=="1"){

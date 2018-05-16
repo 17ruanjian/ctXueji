@@ -4,8 +4,6 @@
 @{
     Dictionary<int, int> rollcall = new Dictionary<int, int>();
     var db = Database.Open("ctXueji");
-    var list = "select * from log where teachers_name='" + Session["name"] + "' and courses_id=0";
-    var temp = db.QuerySingle(list);
     if (Session["name"] == null || Session["username"] == null)
     {
         Response.Redirect("~/login.cshtml");
@@ -20,84 +18,33 @@
         var classes_id = Request.Form["classes_id"];
         var time = Convert.ToString(DateTime.Now);
         var b = temparry1.Count();
-        int h = DateTime.Now.Hour;//小时部分
-
-        int m = DateTime.Now.Minute;//分钟部分7-8,9-10,12-13,14-15,16-17
-        if (temp != null && Functions.ExemptTime(temp.time_stamp))
+        int h = DateTime.Now.Hour; //小时部分
+        int m = DateTime.Now.Minute; //分钟部分7-8,9-10,12-13,14-15,16-17
+        // Response.Write("<h1>小时是"+ h.ToString()+"分钟是"+m.ToString()+"</h1><br>");
+        int tTrick= h*100+m;
+        bool tTrickResult=(tTrick>=755 && tTrick<=815)||(tTrick>=955 && tTrick<=1015)||(tTrick>=1255 && tTrick<=1315)||(tTrick>=1455 && tTrick<=1515)||(tTrick>=1630 && tTrick<=1645);
+        
+        if (tTrickResult )
         {
-            var timenow = DateTime.Now;
-            var update = "update log set time_stamp='" + timenow + "',status=1,courses_id='" + courses_id + "'where id=" + temp.id;
-            var updatet = "update teachers set exempt=(null) where teachers_name='" + Session["name"] + "'";
-            db.Execute(update);
-            db.Execute(updatet);
             for (int i = 0; i < b; i++)
             {
                 int t = i + 1;
                 var statu = Request.Form["statu_" + t];
                 rollcall.Add(Convert.ToInt16(temparry1[i]), Convert.ToInt16(statu));
             }
+
             string DictionaryTostring = Functions.DictionaryToString(rollcall);
             var addRollcall = "insert into rollcall (courses_id,classes_id,time_stamp,sid_state,user_power,user_name) values(@0,@1,@2,@3,@4,@5)";//students_id + state => sid_state
             db.Execute(addRollcall, courses_id, classes_id, time, DictionaryTostring, Convert.ToInt16(Session["authority"]), Convert.ToString(Session["name"]));//字典转字符
             Response.Redirect("~/jump.cshtml");
-
         }
         else
         {
-
-
-            if (h == 7 || h == 8 || h == 9 || h == 10 || h == 12 || h == 13 || h == 14 || h == 15 || h == 16 || h == 17)
-            {
-                if (h == 7 || h == 9 || h == 12 || h == 14 || h == 16)
-                {
-                    if (m >= 55)
-                    {
-
-                        for (int i = 0; i < b; i++)
-                        {
-                            int t = i + 1;
-                            var statu = Request.Form["statu_" + t];
-                            rollcall.Add(Convert.ToInt16(temparry1[i]), Convert.ToInt16(statu));
-                        }
-                        string DictionaryTostring = Functions.DictionaryToString(rollcall);
-                        var addRollcall = "insert into rollcall (courses_id,classes_id,time_stamp,sid_state,user_power,user_name) values(@0,@1,@2,@3,@4,@5)";//students_id + state => sid&state
-                        db.Execute(addRollcall, courses_id, classes_id, time, DictionaryTostring, Convert.ToInt16(Session["authority"]), Convert.ToString(Session["name"]));//字典转字符
-                        Response.Redirect("~/jump.cshtml");
-                    }
-                    else
-                    {
-                        Response.Redirect("~/jumper");
-                    }
-                }
-                else if (h == 8 || h == 10 || h == 13 || h == 15 || h == 17)
-                {
-                    if (m >= 0 && m <= 15)
-                    {
-                        for (int i = 0; i < b; i++)
-                        {
-                            int t = i + 1;
-                            var statu = Request.Form["statu_" + t];
-                            rollcall.Add(Convert.ToInt16(temparry1[i]), Convert.ToInt16(statu));
-                        }
-                        string DictionaryTostring = Functions.DictionaryToString(rollcall);
-                        var addRollcall = "insert into rollcall (courses_id,classes_id,time_stamp,sid_state,user_power,user_name) values(@0,@1,@2,@3,@4,@5)";//students_id + state => sid&state
-                        db.Execute(addRollcall, courses_id, classes_id, time, DictionaryTostring, Convert.ToInt16(Session["authority"]), Convert.ToString(Session["name"]));//字典转字符
-                        Response.Redirect("~/jump.cshtml");
-                    }
-                    else
-                    {
-                        Response.Redirect("~/jumper");
-                    }
-                }
-                else
-                {
-                    Response.Redirect("~/jumper");
-                }
-            }
-            else
-            {
-                Response.Redirect("~/jumper");
-            }
+            // Response.Redirect("~/jumper?"+tTrick.ToString());
+            Response.Write(tTrick);
+            Response.Write("<br>");
+            Response.Write(tTrickResult);
+            Response.Write("<br>");
         }
     }
 }

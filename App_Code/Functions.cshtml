@@ -202,18 +202,20 @@
     }
     public static bool ExemptTime(string exempt)
     {
+        if(string.IsNullOrEmpty(exempt)){
+            return false;
+        }
         var t = DateTime.Now;
         var t30 = Convert.ToDateTime(exempt);
-        var f = false;
         if (t > t30)
         {
-            return f;
+            return false;
         }
         else if (t <= t30)
         {
-            f = true;
+            return true;
         }
-        return f;
+        return false;
     }
 
     public static bool Times(string time_stamp)

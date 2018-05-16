@@ -5,11 +5,10 @@
     if (IsPost)
     {
         var name = Request.Form["radio"];
-        var time = DateTime.Now.AddMinutes(30);
-        var update = "update teachers set exempt = '" + time + "'where teachers_name = '" + name + "'";
+        var number = Request.Form["num"];
+        var update = "update teachers set exempt = '" + number + "'where teachers_name = '" + name + "'";
         db.Execute(update);
-        var add = "insert into log (teachers_name,time_stamp) values(@0,@1)";
-        db.Execute(add, name, time);
+
         Response.Redirect("rollcall_add");
     }
 }
@@ -30,12 +29,26 @@
             <div class="alert alert-info">
                 <form method="post">
                     <div id="radio">
+                        <div>
+                            <span>老师:</span>
+                        
                         @foreach (var row in db.Query(list))
                         {
 
                             <input type="radio" name="radio" id="radio_@row.id" value=@row.teachers_name><label for="radio_@row.id">@row.teachers_name</label>
 
                         }
+                        </div>
+                                                                                                        
+                        <div>
+                            <span>课时次数:</span>
+                        
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <input type="radio" name="num" id="num_@i" value=@i><label for="num_@i">@i</label>
+
+                        }
+                        </div>
                     </div>
                     <button class="btn btn-primary" type="submit">提交</button>
                 </form>

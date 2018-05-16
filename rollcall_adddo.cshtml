@@ -16,6 +16,8 @@
         string[] temparry1 = temp1.Split(',');
         var courses_id = Request.Form["courses_id"];
         var classes_id = Request.Form["classes_id"];
+        var list = "select * from teachers where teachers_name='" + Session["name"]+"'";
+        var temp = db.QuerySingle(list);
         var time = Convert.ToString(DateTime.Now);
         var b = temparry1.Count();
         int h = DateTime.Now.Hour; //小时部分
@@ -23,9 +25,14 @@
         // Response.Write("<h1>小时是"+ h.ToString()+"分钟是"+m.ToString()+"</h1><br>");
         int tTrick= h*100+m;
         bool tTrickResult=(tTrick>=755 && tTrick<=815)||(tTrick>=955 && tTrick<=1015)||(tTrick>=1255 && tTrick<=1315)||(tTrick>=1455 && tTrick<=1515)||(tTrick>=1630 && tTrick<=1645);
-        
-        if (tTrickResult )
+
+        if (tTrickResult || Convert.ToInt16(temp.exempt) > 0)
         {
+            if (Convert.ToInt16(temp.exempt) > 0)
+            {
+                var updateteachers = "update teachers set exempt=exempt-1 where teachers_name = '" + Session["name"] + "'";
+                db.Execute(updateteachers);
+            }
             for (int i = 0; i < b; i++)
             {
                 int t = i + 1;

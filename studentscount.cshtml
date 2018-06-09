@@ -1,0 +1,241 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+
+    var db = Database.Open("ctXueji");
+    var id = Request["classes_id"];
+
+    var students = "select * from students where classes_id=" + id + "and students_status = 1";
+    int temp = 1;
+    var classesName = db.QuerySingle("select * from View_classes_one where id="+id);
+    var classes = "select * from rollcall where classes_id=" + id;
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="~/Scripts/highcharts.js"></script>
+    <script src="~/Scripts/exporting.js"></script>
+    <script src="~/Scripts/export-data.js"></script>
+</head>
+<body>
+    @*@{ int a = 1;}
+        @foreach (var row1 in db.Query(students))
+        {
+            Dictionary<int, int> str = new Dictionary<int, int>();
+            int item = 0;
+            foreach (var sid in db.Query(classes))
+            {
+                str = Functions.StringToDictionary(sid.sid_state);
+                foreach (var i in str)
+                {
+                    if (i.Key == row1.id)
+                    {
+                        if (i.Value == 1)
+                        {
+                            item++;
+                        }
+                    }
+                }
+                switch (a)
+                {
+                    case 1:
+                        @item
+                        break;
+                    default:
+                        @:, @item
+                        break;
+                }
+                a++;
+            }
+        }*@
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    <script>
+    Highcharts.chart('container',
+        {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '@classesName.classes_year@classesName.majors_name'
+            },
+            xAxis: {
+                categories: [
+                    @foreach (var row in db.Query(students))
+                    {
+                        switch (temp)
+                        {
+                            case 1:
+                                @:"@row.students_name"
+                                break;
+                            default:
+                                @:, "@row.students_name"
+                                break;
+                        }
+                        temp++;
+
+                    }
+                ]
+            },
+            yAxis: {
+                min: 0,
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+            legend: {
+                align: 'right',
+                x: -30,
+                verticalAlign: 'top',
+                y: 25,
+                floating: true,
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                headerFormat: '<b>{point.x}</b><br/>',
+                pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '正常出勤',
+                    data: [
+                        @{ int a = 1;}
+                        @foreach (var row1 in db.Query(students)){
+                                Dictionary<int, int> str = new Dictionary<int, int>();
+                                int item = 0;
+                                foreach (var sid in db.Query(classes))
+                                {
+                                    str = Functions.StringToDictionary(sid.sid_state);
+                                    foreach (var i in str)
+                                    {
+                                        if (i.Key == row1.id)
+                                        {
+                                            if (i.Value == 1)
+                                            {
+                                                item++;
+                                            }
+                                        }
+                                    }
+
+                                }
+                                    switch (a)
+                                    {
+                                        case 1:
+                                            @item
+                                            break;
+                                        default:
+                                            @:, @item
+                                            break;
+                                    }
+                                    a++;
+                            }
+                        ]
+                }, {
+                    name: '旷课',
+                    data: [
+                        @{ int c = 1;}
+                        @foreach (var row1 in db.Query(students)){
+                                Dictionary<int, int> str = new Dictionary<int, int>();
+                                int item = 0;
+                                foreach (var sid in db.Query(classes))
+                                {
+                                    str = Functions.StringToDictionary(sid.sid_state);
+                                    foreach (var i in str)
+                                    {
+                                        if (i.Key == row1.id)
+                                        {
+                                            if (i.Value != 4&&i.Value!=1)
+                                            {
+                                                item++;
+                                            }
+                                        }
+                                    }
+
+                                }
+                                    switch (c)
+                                    {
+                                        case 1:
+                                            @item
+                                            break;
+                                        default:
+                                            @:, @item
+                                            break;
+                                    }
+                                    c++;
+                            }
+                        ]
+                }, {
+                    name: '迟到',
+                    data: [
+                     @{ int b = 1;}
+                        @foreach (var row1 in db.Query(students)){
+                                Dictionary<int, int> str = new Dictionary<int, int>();
+                                int item = 0;
+                                foreach (var sid in db.Query(classes))
+                                {
+                                    str = Functions.StringToDictionary(sid.sid_state);
+                                    foreach (var i in str)
+                                    {
+                                        if (i.Key == row1.id)
+                                        {
+                                            if (i.Value == 4)
+                                            {
+                                                item++;
+                                            }
+                                        }
+                                    }
+
+                                }
+                                    switch (b)
+                                    {
+                                        case 1:
+                                            @item
+                                            break;
+                                        default:
+                                            @:, @item
+                                            break;
+                                    }
+                                    b++;
+                            }
+                        
+                        ]
+                }
+            ]
+        });
+    </script>
+</body>
+</html>
+@*"祝敏",
+    //    "周星宇",
+    //    "黄思雯",
+    //    "潘津豪",
+    //    "邱雪健",
+    //    "李欣桐",
+    //    "孔莹",
+    //    "王唯蓉",
+    //    "钱文程",
+    //    "李煕茹",
+    //    "于昕琦",
+    //    "关笑笑",
+    //    "宋勃霖",
+    //    "宋雨饶",
+    //    "邹雨航",
+    //    "陈铮",
+    //    "王世文"*@

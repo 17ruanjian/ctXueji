@@ -5,29 +5,67 @@
         Response.Redirect("~/login.cshtml");
     }
     var db = Database.Open("ctXueji");
+    var majorsList = "select * from majors";
+    int i = 1;
     if (IsPost)
     {
+        var major = Request.Form["major"];
         var name = Request.Form["name"];
         var type = Request.Form["type"];
-        var add = "insert into teachers (teachers_name,teachers_type) values(@0,@1)";
-        db.Execute(add, name, type);
+        var add = "insert into teachers (teachers_name,teachers_type,majors_id) values(@0,@1,@2)";
+        db.Execute(add, name, type, major);
         Response.Redirect("~/teachers");
     }
 }
-<form method="post" class="navbar-form">
-    <strong>教师：</strong><br />
-    <input class="form-control" type="text" id="name" name="name"><br />
-    <strong>职能：</strong><br />
-                        <select class="form-control" id="type" name="type">
-                            <option value=2>
-                                辅导员
-                            </option>
-                            <option value=1>
-                                讲师
-                            </option>
-                            <option value=3>
-                                讲师+辅导员
-                            </option>
-                        </select>
-    <input class="btn btn-primary" type="submit" value="确认添加" />
-</form>
+    <form method="post" class="navbar-form">
+            <strong>教师：</strong><br />
+            <input class="form-control" type="text" id="name" name="name"><br />
+            <strong>职能：</strong><br />
+            <select class="form-control" id="type" name="type">
+                <option value=2>
+                    辅导员
+                </option>
+                <option value=1>
+                    讲师
+                </option>
+                <option value=3>
+                    讲师+辅导员
+                </option>
+            </select>
+                <strong>教师所涉及的专业：</strong><br />
+                @foreach (var major in db.Query(majorsList))
+                {
+
+                    <input type="checkbox" id="major_@i" name="major" value=@major.id>
+                    <label for="major_@i">@major.majors_name</label>
+                    i++;
+                }
+            <input class="btn btn-primary" type="submit" value="确认添加" />
+    </form>
+@*<div class="alert alert-info">
+        <form method="post">
+            <div id="radio">
+                <div>
+                    <span>老师:</span>
+
+                    @foreach (var row in db.Query(list))
+                    {
+
+                        <input type="radio" name="radio" id="radio_@row.id" value=@row.teachers_name><label for="radio_@row.id">@row.teachers_name</label>
+
+                    }
+                </div>
+
+                <div>
+                    <span>课时次数:</span>
+
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <input type="radio" name="num" id="num_@i" value=@i><label for="num_@i">@i</label>
+
+                    }
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">提交</button>
+        </form>
+    </div>*@

@@ -294,7 +294,7 @@ else
     }
     if (prompt == 2)
     {
-        var studentsList = "select *from students where classes_id = " + classes;
+        var studentsList = "select *from students where classes_id = " + classes+"and students_status = 1";
         <form action="~/rollcall_adddo.cshtml" method="post">
             <table id="table_id" class="display">
                 <thead>

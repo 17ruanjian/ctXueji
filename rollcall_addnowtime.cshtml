@@ -1,0 +1,92 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+    if (Session["name"] == null || Session["username"] == null)
+    {
+        Response.Redirect("~/login.cshtml");
+    }
+    if (Convert.ToInt16(Session["authority"]) == 2|| Convert.ToInt16(Session["authority"]) == 3)
+    {
+        Response.Redirect("~/rollcall_add");
+
+    }
+    var yearsnow = DateTime.Now.Year.ToString();
+    var timenow = DateTime.Now;
+    int yearweek = Functions.NowYearsWeek();
+    int week = Functions.yearfirst(timenow);
+    int lessons = Functions.lessonsNow();
+    var teacherid = db.QuerySingle("select * from teachers where teachers_name='" + Session["name"]+"'").id;
+    var weekarranging = db.QuerySingle("select * from weekArranging where wa_years = " + yearsnow + " and wa_startWeek<" + yearweek + " and wa_endWeek>" + yearweek).id;
+    var coursesarranging = db.QuerySingle("select * from coursesArranging where lessonsOrder=" + lessons + " and weekDays=" + week + " and teachers_id=" + teacherid + "and weekArranging_id=" + weekarranging);
+    if (coursesarranging == null)
+    {
+        Response.Redirect("~/rollcall_add");
+    }
+    var rollcall = db.QuerySingle("select* from rollcall where user_name='" + Session["name"] + "' order by time_stamp DESC");
+    if (Functions.lessonsNow() == Functions.historyNow(rollcall.time_stamp))
+    {
+        Response.Redirect("~/NowtimeEro");
+
+    }
+    string classes_id = coursesarranging.classes_id;
+    if (classes_id.Trim().Length >= 3)
+    {
+        Response.Redirect("~/rollcall_add");
+    }
+    var classes = db.QuerySingle("select * from View_classes_one where id=" + coursesarranging.classes_id);
+    var courses = db.QuerySingle("select * from courses where id=" + coursesarranging.courses_id);
+
+    var students = "select * from students where classes_id=" + coursesarranging.classes_id + "and students_status=1";
+}
+<h2>星期:@week&nbsp;大课节:@lessons</h2>
+<h3>@classes.classes_year@classes.majors_name&nbsp;@courses.courses_name</h3>
+<a class="btn btn-primary" href="~/rollcall_add.cshtml">有信息不符？点击此处点名</a>
+<form action="~/rollcall_adddo.cshtml" method="post">
+    <table id="table_id" class="display">
+        <thead>
+            <tr>
+                <th>学生</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        @{
+            var temp = 1;
+        }
+        <tbody>
+            @foreach (var row3 in db.Query(students))
+            {
+
+                <tr>
+                    <td class="center"><h1>@row3.students_name</h1></td>
+                    <td class="center" style="width:30%">
+                        <table>
+                            <tr>
+                                <td>
+                                    <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 1" value="1" checked="checked" />
+                                    <label for="@row3.id 1">
+                                        <a class="btn btn-success" onclick="onclickRadio(1)">正常</a>
+                                    </label>
+                                </td>
+                                <td>
+                                    <input type="radio" class="radio-inline" name="statu_@temp" id="@row3.id 2" value="2" />
+                                    <label for="@row3.id 2">
+                                        <a class="btn btn-danger" onclick="onclickRadio(2)">缺课</a>
+                                    </label>
+                                </td>
+
+
+                            </tr>
+                        </table>
+                        <input type="hidden" name="students_id" id="students_id" value=@row3.id />
+                    </td>
+                </tr>
+
+                temp++;
+            }
+        </tbody>
+    </table>
+    <input type="hidden" name="classes_id" id="classes_id" value=@db.QuerySingle(students).classes_id />
+    <input type="hidden" name="courses_id" id="courses_id" value=@coursesarranging.courses_id />
+    <span id="hide"><button class="btn" type="submit" id="hide">提交</button></span>
+    <div id="top"></div>
+</form>

@@ -2,7 +2,77 @@
 
 @using System.Text;
 @using System.Security.Cryptography;
+@using System.Text.RegularExpressions
 @functions{
+
+    public static bool teachermajors(string majors,int allmajors)
+    {
+        bool t = false;
+        string[] majorArr = majors.Split(',');
+        foreach (var i in majorArr)
+        {
+            if (Convert.ToInt16(i) == allmajors)
+            {
+                t = true;
+                break;
+            }
+        }
+        return t;
+    }
+
+    public static string students_value(int sid)
+    {
+
+        var db = Database.Open("ctXueji");
+        var student = "select * from students where id = " + sid;
+        var sc = db.QuerySingle(student);
+        var coursesA = "select * from View_coursesArranging_exams_scores";
+        Dictionary<int, int> str = new Dictionary<int, int>();
+        string json = "[";
+        int item = 1;
+        foreach (var row in db.Query(coursesA))
+        {
+            string temp = row.classes_id;
+            string[] temparr = temp.Split(',');
+            int a = 0;
+            foreach (var i in temparr)
+            {
+                int tointi = Convert.ToInt16(i);
+                if (tointi == sc.classes_id)
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a == 1)
+            {
+                str = Functions.StringToDictionary(row.students_value);
+                int value = 0;
+                foreach (var i in str)
+                {
+                    if (i.Key == sid)
+                    {
+                        value = i.Value;
+                        break;
+                    }
+                }
+                if (item == 1)
+                {
+                    json += "{\"Name\" :\"" + row.exams_name + "\", \"Type\" : \"" + row.exams_type + "\", \"Date\" : \"" + row.exams_date + "\", \"Value\" : \"" + value + "\" }";
+                }
+                else
+                {
+                    json += ",{\"Name\" :\"" + row.exams_name + "\", \"Type\" : \"" + row.exams_type + "\", \"Date\" : \"" + row.exams_date + "\", \"Value\" : \"" + value + "\" }";
+                }
+                item++;
+                //JObject item = new JObject(new JProperty("name", row.exams_name), new JProperty("type", row.exams_type), new JProperty("date", row.exams_date), new JProperty("value", value));
+                //staff["students"].Last.AddAfterSelf(item);
+            }
+        }
+        json += "]";
+        return json;
+    }
+
 
     public static void Sessions()
     {
@@ -20,7 +90,7 @@
     }
 
 
-    public static int NowYearsWeek()
+    public static int NowYearsWeek()//今年到现在为止过了多少周
     {
         string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
 
@@ -42,38 +112,126 @@
         return goday;
     }
 
-
-    public static string userMethods_login(string input_Name, string input_Password, string userType)
+    public static int yearfirst(DateTime t)//今天是周几
     {
-        if(userType=="1"){
+        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
+        string weeks = weekdays[Convert.ToInt32(t.DayOfWeek)];
+        var weeksint = Convert.ToInt16(weeks);
+        return weeksint;
+    }
+
+
+    public static int historyNow(DateTime Now)
+    {
+        int lessons = 0;
+
+        var os = Convert.ToDateTime("07:55:00");
+        var ox = Convert.ToDateTime("9:30:00");//1
+        var ts = Convert.ToDateTime("9:55:00");
+        var tx = Convert.ToDateTime("11:30:00");//2
+        var ss = Convert.ToDateTime("12:55:00");
+        var sx = Convert.ToDateTime("14:30:00");//3
+        var fos = Convert.ToDateTime("14:55:00");
+        var fox = Convert.ToDateTime("16:30:00");//4
+        var fis = Convert.ToDateTime("16:55:00");
+        var fix = Convert.ToDateTime("18:30:00");//5
+        if (Now >= os && Now <= ox)
+        {
+            lessons = 1;
+        }
+        if (Now >= ts && Now <= tx)
+        {
+            lessons = 2;
+        }
+        if (Now >= ss && Now <= sx)
+        {
+            lessons = 3;
+        }
+        if (Now >= fos && Now <= fox)
+        {
+            lessons = 4;
+        }
+        if (Now >= fis && Now <= fix)
+        {
+            lessons = 5;
+        }
+        return lessons;
+    }
+
+    public static int lessonsNow()
+    {
+        DateTime Now = Convert.ToDateTime(DateTime.Now.ToLongTimeString());
+        int lessons = 0;
+        var os = Convert.ToDateTime("07:55:00");
+        var ox = Convert.ToDateTime("9:30:00");//1
+        var ts = Convert.ToDateTime("9:55:00");
+        var tx = Convert.ToDateTime("11:30:00");//2
+        var ss = Convert.ToDateTime("12:55:00");
+        var sx = Convert.ToDateTime("14:30:00");//3
+        var fos = Convert.ToDateTime("14:55:00");
+        var fox = Convert.ToDateTime("16:30:00");//4
+        var fis = Convert.ToDateTime("16:55:00");
+        var fix = Convert.ToDateTime("18:30:00");//5
+        if (Now >= os && Now <= ox)
+        {
+            lessons = 1;
+        }
+        if (Now >= ts && Now <= tx)
+        {
+            lessons = 2;
+        }
+        if (Now >= ss && Now <= sx)
+        {
+            lessons = 3;
+        }
+        if (Now >= fos && Now <= fox)
+        {
+            lessons = 4;
+        }
+        if (Now >= fis && Now <= fix)
+        {
+            lessons = 5;
+        }
+        return lessons;
+    }
+
+    public static string userMethods_login(string input_Name, string input_Password,string input_usertype)
+    {
+        if(input_usertype == "true")
+        {
             //input_Password=MD5Encrypt16(input_Password);
             var db = Database.Open("ctXueji");
             var select = "select *from users where username = @0 and password = @1";
             var row = db.QuerySingle(select, input_Name, input_Password);
             if (row != null){
-                    Session["name"] = row.name;
-                    Session["username"] = row.username;
-                    Session["authority"] = row.authority;
-                    return "TOK";
-                }else
-                {
-                    return "tfail";
-                }
-        }else if(userType=="2"){
+                Session["name"] = row.name;
+                Session["username"] = row.username;
+                Session["authority"] = row.authority;
+                return "TOK";
+            }else
+            {
+                return "tfail";
+            }
+        }else if(input_usertype == "false")
+        {
             //input_Password=MD5Encrypt16(input_Password);
             var db = Database.Open("ctXueji");
             var select = "select *from students where students_number = @0 and students_password = @1";
             var row = db.QuerySingle(select, input_Name, input_Password);
             if (row != null){
-                    return "SOK";
-                }else
-                {
-                    return "sfail";
-                }
-        }else{
+                Session["id"] = row.id;
+                Session["name"] = row.students_name;
+                return "SOK";
+            }else
+            {
+                return "sfail";
+            }
+        }
+        else
+        {
             return "wtf";
         }
-        
+
     }
     public static string sessionChange(int t)
     {
@@ -81,13 +239,7 @@
         change = t == 2 ? "下学期" : "上学期";
         return change;
     }
-    public static int yearfirst(DateTime t)
-    {
-        string[] weekdays = { "7", "1", "2", "3", "4", "5", "6" };
-        string weeks = weekdays[Convert.ToInt32(t.DayOfWeek)];
-        var weeksint = Convert.ToInt16(weeks);
-        return weeksint;
-    }
+
     public static int session(string t)
     {
         int temp = 0;

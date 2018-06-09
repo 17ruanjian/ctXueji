@@ -8,12 +8,17 @@
     var db = Database.Open("ctXueji");
     var list = "select *from teachers where id=@0";
     var row = db.QuerySingle(list, id);
+    var majorsList = "select * from majors";
+    int i = 1;
+
     if (IsPost)
     {
         var name = Request.Form["name"];
         var type = Request.Form["type"];
-        var update = "update teachers set teachers_name =@0,teachers_type=@1 where id = " + id;
-        db.Execute(update, name, type, id);
+        var major = Request.Form["major"];
+
+        var update = "update teachers set teachers_name ='"+name+"',teachers_type="+type+",majors_id='"+major+"' where id = " + id;
+        db.Execute(update);
         Response.Redirect("~/teachers");
     }
 }
@@ -35,5 +40,14 @@
             辅导员+讲师
         </option>
     </select><br /><br />
+    <strong>教师所涉及的专业：</strong><br />
+    @foreach (var major in db.Query(majorsList))
+    {
+
+        <input type="checkbox" @if (Functions.teachermajors(row.majors_id, major.id)) { @: checked="checked"
+               } id="major_@i" name="major" value=@major.id>
+        <label for="major_@i">@major.majors_name</label>
+        i++;
+    }
     <input class="btn btn-primary" type="submit" value="确认添加" />
 </form>

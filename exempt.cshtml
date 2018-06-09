@@ -1,15 +1,21 @@
 ﻿@{
     Layout = "~/_xuejiLayout.cshtml";
+    if (Session["name"] == null || Session["username"] == null || Convert.ToInt16(Session["authority"]) != 2)
+    {
+        Response.Redirect("~/rollcall_add.cshtml");
+    }
     var db = Database.Open("ctXueji");
     var list = "select * from teachers where status = 1";
+    var rollcalltime = db.QuerySingle("select * from rollcalldate");
     if (IsPost)
     {
-        var name = Request.Form["radio"];
+        var name = Request.Form["radio_name"];
         var number = Request.Form["num"];
+        var check = Request.Form["radio"];
         var update = "update teachers set exempt = '" + number + "'where teachers_name = '" + name + "'";
         db.Execute(update);
-
-        Response.Redirect("rollcall_add");
+        db.Execute("update rollcalldate set Checktime = " + check + " where id=1");
+        Response.Redirect("exempt");
     }
 }
 <link rel="stylesheet" type="text/css" href="content/jquery-ui.css">
@@ -19,35 +25,53 @@
 
 <script>
     $(function () {
-        $("#radio").buttonset();
+        $("#radiodiv").buttonset();
     });
 </script>
+
 <div class="container">
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
             <h2><font size="4">赦免</font></h2>
             <div class="alert alert-info">
                 <form method="post">
-                    <div id="radio">
+                    
+
+                    <div id="radiodiv">
+                        <p>时间限制点名:</p>
+                        <input type="radio" onclick="times()" name="radio" id="radio1" @if (rollcalltime.Checktime == 1) { @: checked="checked"
+                               } value=1><label for="radio1">开启时间限制</label>
+                        <input type="radio" onclick="times()" name="radio" id="radio2" @if (rollcalltime.Checktime == 2) { @: checked="checked"
+                               } value=2><label for="radio2">关闭时间限制</label><br /><br />
                         <div>
                             <span>老师:</span>
-                        
-                        @foreach (var row in db.Query(list))
-                        {
 
-                            <input type="radio" name="radio" id="radio_@row.id" value=@row.teachers_name><label for="radio_@row.id">@row.teachers_name</label>
+                            @foreach (var row in db.Query(list))
+                            {
 
-                        }
+                                <input type="radio" name="radio_name" id="radio_@row.id" value=@row.teachers_name><label for="radio_@row.id">@row.teachers_name</label>
+
+                            }
+                            @*<script>
+                                function selectInvert(t) {
+                                    var names = document.getElementById(t);                                 
+                                        if(names.checked==true){  
+                                            names.checked=false ;  
+                                        }else{  
+                                            names.checked=true ;  
+                                        }  
+                                    }  
+                            </script>*@
                         </div>
-                                                                                                        
+                     
                         <div>
                             <span>课时次数:</span>
-                        
-                        @for (int i = 1; i <= 5; i++)
-                        {
-                            <input type="radio" name="num" id="num_@i" value=@i><label for="num_@i">@i</label>
 
-                        }
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <input type="radio" name="num" id="num_@i" value=@i><label for="num_@i">@i</label>
+
+                            }
                         </div>
                     </div>
                     <button class="btn btn-primary" type="submit">提交</button>
@@ -56,3 +80,32 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
+@*<form action="">
+
+    <input class="radio" name="age" type="radio"/>a<br>
+    <input class="radio" name="age" type="radio"/>b<br>
+    <input class="radio" name="age" type="radio"/>c
+</form>
+
+<script>
+    var radio = document.querySelectorAll('.radio');
+
+    radio.forEach(function(r) {
+        var isChecked = false
+
+        r.addEventListener('click', function () {
+            if (this.checked === true && isChecked === false) {
+                isChecked = true
+            } else {
+                this.checked = false
+                isChecked = false
+            }
+        })
+    })
+</script>*@

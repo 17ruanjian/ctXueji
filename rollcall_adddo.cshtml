@@ -24,7 +24,21 @@
         int m = DateTime.Now.Minute; //分钟部分7-8,9-10,12-13,14-15,16-17
         // Response.Write("<h1>小时是"+ h.ToString()+"分钟是"+m.ToString()+"</h1><br>");
         int tTrick= h*100+m;
+        var check = db.QuerySingle("select * from rollcalldate");
         bool tTrickResult=(tTrick>=755 && tTrick<=815)||(tTrick>=955 && tTrick<=1015)||(tTrick>=1255 && tTrick<=1315)||(tTrick>=1455 && tTrick<=1515)||(tTrick>=1630 && tTrick<=1645);
+        if (check.Checktime == 2)
+        {
+            tTrickResult = true;
+        }
+
+
+        var rollcallnow = db.QuerySingle("select* from rollcall where user_name='" + Session["name"] + "' order by time_stamp DESC");
+        DateTime histime = rollcallnow.time_stamp;
+        if (histime.ToLongDateString()==DateTime.Now.ToLongDateString() && (Functions.lessonsNow() == Functions.historyNow(histime)))
+        {
+            Response.Redirect("~/NowtimeEro");
+
+        }
 
         if (tTrickResult || Convert.ToInt16(temp.exempt) > 0)
         {

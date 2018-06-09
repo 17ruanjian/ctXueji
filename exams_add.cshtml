@@ -66,28 +66,37 @@
 <script src="~/Scripts/jquery-3.3.1.js"></script>
 <script src="~/Scripts/date.js"></script>
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#hide').click(function (event) {
+            $('#hide').toggle();
+        });
+    });
+
     $(function () {
         $('#date').date({ theme: "datetime" });
     });
 </script>
-<form method="post" class="navbar-form">
-    <strong>考试名称：</strong><br />
-    <input class="form-control" type="text" id="name" name="name" /><br />
-    <strong>考试日期：</strong><br />
-    <input type="text" class="form-control" id="date" name="date" />
-    <br />
-    <strong>考试类型：</strong><br />
-    <select class="form-control" id="type" name="type">
-        <option value=1>
-            期中考试
-        </option>
-        <option value=2>
-            期末考试
-        </option>
-        <option value=3>
-            其他考试
-        </option>
-    </select><br />
-    <input class="btn btn-primary" type="submit" value="确认添加" />
-</form>
-<div id="datePlugin"></div>
+<body onload="hidetoshow()">
+    <form method="post" class="navbar-form">
+        <strong>考试名称：</strong><br />
+        <input class="form-control" type="text" id="name" name="name" /><br />
+        <strong>考试日期：</strong><br />
+        <input type="text" class="form-control" id="date" name="date" />
+        <br />
+        <strong>考试类型：</strong><br />
+        <select class="form-control" id="type" name="type">
+            <option value=1>
+                期中考试
+            </option>
+            <option value=2>
+                期末考试
+            </option>
+            <option value=3>
+                其他考试
+            </option>
+        </select><br />
+        <span id="hide"><input class="btn btn-primary" type="submit" id="hide" value="确认添加" /> </span>
+    </form>
+    <div id="datePlugin"></div>
+</body>

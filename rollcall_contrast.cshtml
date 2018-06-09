@@ -5,10 +5,10 @@
     {
         Response.Redirect("~/login.cshtml");
     }
-    var time = Request.QueryString["time"];
-    var time_sc = Request.QueryString["time_sc"];
-    var list = "select *from rollcall where time_stamp = '" + time + "'";
-    var lists = "select *from rollcall where time_stamp = '" + time_sc + "'";
+    var id = Request.QueryString["id"];
+    var scId = Request.QueryString["scId"];
+    var list = "select *from rollcall where id = " + id;
+    var lists = "select *from rollcall where id = " +scId;
     var row = db.QuerySingle(list);
     var teacher = db.QuerySingle(lists);
     var t = teacher.user_name;
@@ -27,7 +27,7 @@
             <th>状态</th>
         </tr>
         @{
-            var list_sc = "select *from rollcall where time_stamp = '" + time_sc + "'";
+            var list_sc = "select *from rollcall where id = " + scId;
             var row2 = db.QuerySingle(list_sc);
         }
 

@@ -21,8 +21,70 @@
         var weeksession = Convert.ToInt16(Request.Form["weeksession"]);
         var start = Convert.ToInt16(Request.Form["start"]);
         var end = Convert.ToInt16(Request.Form["end"]);
+        //teachers -> courses
+        var teacherList = db.QuerySingle("select * from teachers where id = " + teacher.teachers_id);
+        if (teacherList.courses_id == null || teacherList.courses_id == "")
+        {
+            db.Execute("update teachers set courses_id=" + cours + " where id=" + teacher.teachers_id);
+        }
+        else
+        {
+            string coursesstr = teacherList.courses_id;
+            string[] coursesArr = coursesstr.Split(',');
+            bool temp = false;
+            foreach (var item in coursesArr)
+            {
+                if (Convert.ToInt16(item) != cours)
+                {
+                    temp = true;
+
+                }
+                else
+                {
+                    temp = false;
+                    break;
+                }
+            }
+            if (temp) {
+                db.Execute("update teachers set courses_id=" + teacherList.courses_id + "," + cours + "where id=" + teacher.teachers_id);
+            }
+        }
+
+        //classes -> courses
+        var classesList = db.QuerySingle("select * from classes where id = " + class_id);
+        if (classesList.courses_id == null || classesList.courses_id == "")
+        {
+            db.Execute("update classes set courses_id=" + courses + "where id=" + class_id);
+        }
+        else
+        {
+            string classesstr = classesList.courses_id;
+            string[] classesArr = classesstr.Split(',');
+            bool temp = false;
+            foreach (var item in classesArr)
+            {
+                if (Convert.ToInt16(item) != cours)
+                {
+                    temp = true;
+                }
+                else
+                {
+                    temp = false;
+                    break;
+                }
+            }
+            if (temp)
+            {
+                var edit = "update classes set courses_id='" + classesList.courses_id + "," + cours + "' where id=" + class_id;
+                db.Execute(edit);
+            }
+        }
+
         var add = "insert into coursesArranging (courses_id,classes_id,teachers_id,weekArranging_id,weekStart,weekEnd,lessonsOrder,classroom_id,weekDays) values(@0,@1,@2,@3,@4,@5,@6,@7,@8)";
         db.Execute(add, cours, class_id, teacher.teachers_id, weeksession, start, end, order_id, class_room, week_id);
+
+
+        Response.Redirect("~/rollcall_add.cshtml");
     }
 }
 <style>

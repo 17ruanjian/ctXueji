@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/_xuejiLayout.cshtml";
+    var db = Database.Open("ctXueji");
+
+    var list = "select * from View_classes_one";
+
+}
+<style>
+    div {
+        float: left;
+    }
+</style>
+<div>
+    <h3>到目前为止班级出勤率！</h3>
+    <ul>
+        @foreach (var row in db.Query(list))
+        {
+            <li><a href="~/NewCount.cshtml?classes_id=@row.id">@row.classes_year@row.majors_name</a></li>
+
+        }
+    </ul>
+</div>
+
+<div>
+    <h3>到目前为止个人出勤率！</h3>
+    <ul>
+        @foreach (var row in db.Query(list))
+        {
+            <li><a href="~/studentscount.cshtml?classes_id=@row.id">@row.classes_year@row.majors_name</a></li>
+
+        }
+    </ul>
+</div>

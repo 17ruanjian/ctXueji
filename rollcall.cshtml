@@ -7,7 +7,7 @@
     var db = Database.Open("ctXueji");
     var list="";
 }
-@if (Convert.ToInt16(Session["authority"]) == 2)
+@if (Convert.ToInt16(Session["authority"]) == 2||Convert.ToInt16(Session["authority"]) == 4)
 {
     list = "select * from rollcall order by time_stamp DESC";//user_power="+Convert.ToInt16(Session["authority"])+"
 }
@@ -29,7 +29,7 @@ else
             <tr>
                 <th>班级</th>
                 <th>课程</th>
-                <th>出勤率(总数-出勤=缺勤)</th>
+                <th>出勤率(总数-缺勤=出勤)</th>
                 <th>时间</th>
                 <th>操作人</th>
             </tr>

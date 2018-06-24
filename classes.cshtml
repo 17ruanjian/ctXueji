@@ -35,7 +35,7 @@
         @foreach (var row in db.Query(list))
         {
             <tr class="t">
-                @if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
+                @if (Convert.ToInt16(Session["authority"]) >= 2)
                 {
                     <td class="center"><a href="~/students.cshtml?classe_id=@row.id">@row.classes_year@row.majors_name</a></td>
                 }

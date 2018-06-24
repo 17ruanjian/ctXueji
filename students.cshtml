@@ -5,10 +5,11 @@
         Response.Redirect("~/login.cshtml");
     }
     var db = Database.Open("ctXueji");
+    int authority = Convert.ToInt16(Session["authority"]);
     var classes_id = Request.QueryString["classes_id"];
     var classea_id = Request.QueryString["classe_id"];
     // var list = "select *from students inner join classes on students.classes_id = classes.id inner join majors on classes.majors_id = majors.id";
-    var list="select * from View_list_students";
+    var list = "select * from View_list_students";
     if (IsPost)
     {
         list += "";
@@ -21,39 +22,39 @@
     }
 }
 <script>
-        $(document).ready(function () {
-            $('#table_id').DataTable(
-                {
-                    "responsive": true,
-                    "paging":true,
-                    "pagingType": "full_numbers",
-                    "searching":true,
-                    "columnDefs": [
-                        { className: "dt-body-center", "targets": [ 0 ] }
-                                ],
-                        "language": {
-                            "lengthMenu": "每页 _MENU_ 条记录",
-                            "zeroRecords": " ",
-                            "info": "当前 _START_ 条到 _END_ 条 共 _TOTAL_ 条",
-                            "infoEmpty": "无记录",
-                            "infoFiltered": "(从 _MAX_ 条记录过滤)",
-                            "search": "用户",
-                            "processing": "载入中",
-                            "paginate": {
-                                "first": "首页",
-                                "previous": "上一页",
-                                "next": "下一页",
-                                "last": "尾页"
-                            }
-                        },
-                }
-                
-            );
-        });
+    $(document).ready(function () {
+        $('#table_id').DataTable(
+            {
+                "responsive": true,
+                "paging": true,
+                "pagingType": "full_numbers",
+                "searching": true,
+                "columnDefs": [
+                    { className: "dt-body-center", "targets": [0] }
+                ],
+                "language": {
+                    "lengthMenu": "每页 _MENU_ 条记录",
+                    "zeroRecords": " ",
+                    "info": "当前 _START_ 条到 _END_ 条 共 _TOTAL_ 条",
+                    "infoEmpty": "无记录",
+                    "infoFiltered": "(从 _MAX_ 条记录过滤)",
+                    "search": "用户",
+                    "processing": "载入中",
+                    "paginate": {
+                        "first": "首页",
+                        "previous": "上一页",
+                        "next": "下一页",
+                        "last": "尾页"
+                    }
+                },
+            }
+
+        );
+    });
 </script>
 @if (Session["name"] != null)
 {
-    if (Convert.ToInt16(Session["authority"]) == 2 || Convert.ToInt16(Session["authority"]) == 3)
+    if (authority >= 2)
     {
         if (classes_id == null)
         {
@@ -72,14 +73,14 @@
                 <th>性别/年龄</th>
                 <th>班级</th>
                 <th>学籍状态</th>
-                @if (Convert.ToInt16(Session["authority"]) == 2)
+                @if (authority == 2)
                 {
                     <th>操作</th>
                 }
             </tr>
         </thead>
         <tbody>
-            @if (Convert.ToInt16(Session["authority"]) == 3)
+            @if (authority == 3)
             {
                 if (classea_id == null)
                 {
@@ -110,7 +111,7 @@
                     </tr>
                 }
             }
-            @if (classea_id == null && Convert.ToInt16(Session["authority"]) == 1)
+            @if (classea_id == null && authority == 1)
             {
                 var listCommand = "select classes_id from teachers where teachers_name = " + "'" + Session["name"] + "'";
                 var cx = db.QuerySingle(listCommand);
@@ -145,31 +146,43 @@
                     }
                 }
             }
-            @if (Convert.ToInt16(Session["authority"]) == 2)
+            @if (authority == 2 || authority == 4)
             {
                 foreach (var row in db.Query(list))
                 {
-                    <tr>
-                        <td>@row.students_number</td>
-                        <td><a href="~/students_edit.cshtml?id=@row.id&cid=@row.classes_id">@row.students_name</a></td>
-                        <td>@row.students_sex/@row.students_age</td>
-                        <td>@row.classes_year@row.majors_name</td>
-                        <td>
-                            @if (row.students_status == 1)
+                        <tr>
+                            <td>@row.students_number</td>
+                            @if (authority != 4)
                             {
-                                <a class="btn btn-success">在籍</a>
-                            }
-                            else if (row.students_status == 2)
-                            {
-                                <a class="btn btn-warning">挂籍</a>
+                                <td><a href="~/students_edit.cshtml?id=@row.id&cid=@row.classes_id">@row.students_name</a></td>
                             }
                             else
                             {
-                                <a class="btn btn-danger">开除</a>
+                                <td>@row.students_name</td>
                             }
-                        </td>
-                        <td><a class="btn btn-danger" href="~/students_del.cshtml?id=@row.id">删除</a></td>
-                    </tr>
+                            <td>@row.students_sex/@row.students_age</td>
+                            <td>@row.classes_year@row.majors_name</td>
+                            <td>
+                                @if (row.students_status == 1)
+                                {
+                                    <a class="btn btn-success">在籍</a>
+                                }
+                                else if (row.students_status == 2)
+                                {
+                                    <a class="btn btn-warning">挂籍</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-danger">开除</a>
+                                }
+                            </td>
+                            @if (authority != 4)
+                            {
+                                <td><a class="btn btn-danger" href="~/students_del.cshtml?id=@row.id">删除</a></td>
+                            }
+                            
+
+                        </tr>
                 }
             }
         </tbody>

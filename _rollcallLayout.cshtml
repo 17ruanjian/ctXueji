@@ -35,22 +35,28 @@
                 <ul class="nav navbar-nav">
 
 
-                    @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 2)
+                    @if (Convert.ToInt16(Session["authority"]) == 3 || Convert.ToInt16(Session["authority"]) == 2||Convert.ToInt16(Session["authority"]) == 4)
                     {
                         <li><a href="~/students.cshtml">学生</a></li>
                         <li><a href="~/classes.cshtml">班级</a></li>
                         <li><a href="~/teachers.cshtml">教师</a></li>
                         <li><a href="~/majors.cshtml">专业</a></li>
+                        <li><a href="~/counttest.cshtml">统计(测试)</a></li>
+
                     }
                     @if (Convert.ToInt16(Session["authority"]) == 2)
                     {
                         <li><a href="~/exempt.cshtml">赦免</a></li>
-                        <li><a href="~/counttest.cshtml">统计(测试)</a></li>
 
                         <li><a href="~/courses.cshtml">课程</a></li>
                     }
                     <li><a href="~/courses_list.cshtml">成绩</a></li>
-                    <li><a href="~/rollcall_add.cshtml">点名</a></li>
+                    @if(Convert.ToInt16(Session["authority"]) == 4){
+                    	<li><a href="~/rollcall.cshtml">点名</a></li>
+                    	}else{
+                    		<li><a href="~/rollcall_add.cshtml">点名</a></li>
+                    	}
+                    
                     <li><a href="~/classtime.cshtml">课表</a></li>
                 </ul>
                 <div class="profile navbar-right">

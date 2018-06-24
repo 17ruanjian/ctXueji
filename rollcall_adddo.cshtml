@@ -32,12 +32,14 @@
         }
 
 
-        var rollcallnow = db.QuerySingle("select* from rollcall where user_name='" + Session["name"] + "' order by time_stamp DESC");
-        DateTime histime = rollcallnow.time_stamp;
-        if (histime.ToLongDateString()==DateTime.Now.ToLongDateString() && (Functions.lessonsNow() == Functions.historyNow(histime)))
+        var rollcallnow = "select* from rollcall where user_name='" + Session["name"] + "' order by time_stamp DESC";
+        foreach (var rollcallNow in db.Query(rollcallnow))
         {
-            Response.Redirect("~/NowtimeEro");
-
+            DateTime histime = rollcallNow.time_stamp;
+            if (histime.ToShortDateString()==DateTime.Now.ToShortDateString() && (Functions.lessonsNow() == Functions.historyNow(histime)) && Convert.ToInt16(classes_id) == rollcallNow.classes_id)
+            {
+                Response.Redirect("~/NowtimeEro");
+            }
         }
 
         if (tTrickResult || Convert.ToInt16(temp.exempt) > 0)

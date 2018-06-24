@@ -204,6 +204,13 @@
             var select = "select *from users where username = @0 and password = @1";
             var row = db.QuerySingle(select, input_Name, input_Password);
             if (row != null){
+                if (row.authority == 4)
+                {
+                    Session["name"] = row.name;
+                    Session["username"] = row.username;
+                    Session["authority"] = row.authority;
+                    return "TFOK";
+                }
                 Session["name"] = row.name;
                 Session["username"] = row.username;
                 Session["authority"] = row.authority;

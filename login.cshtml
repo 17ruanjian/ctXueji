@@ -39,7 +39,10 @@ $(document).ready(function(e) {
                         if (data.trim() == "TOK") //要加上去空格，防止内容里面有空格引起错误
                         {
                             window.location.href = "rollcall_addnowtime"; //js跳转页面
-                            } else if (data.trim() == "SOK"){
+                            }else if(data.trim() == "TFOK"){
+                                window.location.href = "rollcall";
+                            }
+                             else if (data.trim() == "SOK"){
                                 window.location.href = "ok.cshtml";
                                 } else if (data.trim() == "tfail"){
                                     $("#tips").html("教职工用户名或密码错误");

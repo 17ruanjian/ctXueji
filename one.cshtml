@@ -1,0 +1,47 @@
+﻿@{
+    var db = Database.Open("ctXueji");
+}
+<form method="post">
+    <label for="name"></label>
+    <input type="text" name="name" id="name" value="" />(请输入你的名字)
+    <input type="submit" value="查询" />
+</form>
+@{
+    if (IsPost)
+    {
+        var name = Request.Form["name"];
+        var student = db.QuerySingle("select id,classes_id from students where students_name = '" + name + "'");
+        var rollcall = "select * from rollcall where classes_id = " + student.classes_id;
+        int z = 0;
+        int c = 0;
+        int k = 0;
+        string cid = "";
+        string kid = "";
+        foreach (var count in db.Query(rollcall))
+        {
+            Dictionary<int, int> str = new Dictionary<int, int>();
+            str = Functions.StringToDictionary(count.sid_state);
+            foreach (var i in str)
+            {
+                if (i.Key == student.id)
+                {
+                    if (i.Value == 4)
+                    {
+                        c++;
+                        cid += cid == "" ? count.id : "," + count.id;
+                    }
+                    else if(i.Value!=1)
+                    {
+                        k++;
+                        kid += kid == "" ? count.id : "," + count.id;
+                    }
+                }
+            }
+            z++;
+        }
+        <h2>姓名：@name</h2>
+        <h2>总课时：@z</h2>
+        <h2><a href="~/c.cshtml?str=@cid">迟到：@c</a></h2>
+        <h2><a href="~/k.cshtml?str=@kid">旷课：@k</a></h2>
+    }
+}

@@ -1,0 +1,14 @@
+﻿@{
+    var db = Database.Open("ctXueji");
+    var str = Request["str"];
+    string[] strarr = str.Split(',');
+    foreach (var i in strarr)
+    {
+        int strtoint = Convert.ToInt16(i);
+        var message = db.QuerySingle("select * from rollcall where id=" + strtoint);
+        var courses = db.QuerySingle("select courses_name from courses where id=" + message.courses_id);
+
+        <p>时间：@message.time_stamp&nbsp;课程：@courses.courses_name</p>
+
+    }
+}
